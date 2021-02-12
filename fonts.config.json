@@ -1,0 +1,23 @@
+{
+	"google-fonts-plugin": {
+		"fonts": [
+			{
+				"family": "Heebo",
+                "variants": [
+                    "400",
+					"900"
+				]
+            },
+            {
+                "family": "Roboto",
+                "variants": [
+                    "400"
+                ]
+            }
+		],
+		"formats": [
+			"woff",
+			"woff2"
+		]
+	}
+}
