@@ -18,20 +18,24 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThLarge, faBars } from '@fortawesome/free-solid-svg-icons';
 
-import GridObject from './components/GridObject.jsx';
+import ResultsGridView from './components/Results/Grid/ResultsGridView.jsx';
 import FilterMenu from './components/FilterMenu.jsx';
+
+import Config from './museum.config.js';
 
 function App() {
   return (
     <>
       <Jumbotron fluid className='museumtron mb-0'>
-        <div className='title'>
-          <h1>VIRTUAL MUSEUM</h1>
-          <p>All your favourite museum objects in one place!</p>
-        </div>
+        <Container fluid='lg'>
+          <div className='title'>
+            <h1>{Config.site.name}</h1>
+            <p>{Config.site.tagline}</p>
+          </div>
+        </Container>
       </Jumbotron>
       <ProgressBar variant='primary' now={0} className='mb-4 page-progress' />
-      <Container fluid>
+      <Container fluid='lg'>
 
         <Row>
           <Col md={4} lg={3}>
@@ -76,20 +80,7 @@ function App() {
                 </Button>
               </OverlayTrigger>
             </ButtonGroup>
-            <Row xs={2} md={2} lg={3}>
-              <Col>
-                <GridObject />
-              </Col>
-              <Col>
-                <GridObject />
-              </Col>
-              <Col>
-                <GridObject />
-              </Col>
-              <Col>
-                <GridObject />
-              </Col>
-            </Row>
+            <ResultsGridView/>
           </Col>
         </Row>
       </Container>
