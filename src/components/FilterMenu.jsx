@@ -21,16 +21,24 @@ class FilterMenu extends React.Component {
             {
               lang: 'Has Image',
               key: 'has-image',
-              filters: [{
-                lang: 'Secondary has image',
-                key: 'secondary-image',
-              }]
             },
             {
               lang: 'Non-Commercial Use',
               key: 'non-c-image',
             }
           ]
+        },
+        {
+          lang: 'Category',
+          open: false
+        },
+        {
+          lang: 'Maker',
+          open: false
+        },
+        {
+          lang: 'Date',
+          open: false
         }
       ]
     };
@@ -72,7 +80,6 @@ class FilterMenu extends React.Component {
           label={filter.lang} 
           onClick={e => e.stopPropagation()}
         ></Form.Check>;
-        console.log(checkbox);
         list.push(
           <li key={f}>
             {checkbox}
