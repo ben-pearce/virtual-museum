@@ -6,6 +6,9 @@ module.exports = {
     enable: true,
   },
   webpack: {
+    devServer: {
+      historyApiFallback: true
+    },
     plugins: {
       add: [new GoogleFontsPlugin(path.resolve(__dirname,'./fonts.config.json'))]
     }
