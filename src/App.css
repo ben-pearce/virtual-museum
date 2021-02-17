@@ -16,7 +16,7 @@ body {
   color: white;
   background-color: rgba(255, 255, 255, 0.3);
   padding: 20px;
-  margin: 0 20px;
+  margin: 0;
   display: block;
 }
 
@@ -38,12 +38,41 @@ body {
 }
 
 .grid-image-wrap {
-  height: 200px;
+  height: 180px; 
   overflow: hidden;
+  position: relative;
   background-image: 
   linear-gradient( 
     109.6deg, 
     rgba(39,142,255,1) 11.2%,
     rgba(98,113,255,0.78) 100.2%
   );
+}
+
+.grid-image-wrap img {
+  height: 100%;
+  width: auto;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  transition: transform .2s;
+}
+
+.card:hover .grid-image-wrap img {
+  transform: scale(1.5);
+}
+
+.grid-title-wrap {
+  height: 2.5em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+}
+
+.list-object {
+  width: 100%;
 }
