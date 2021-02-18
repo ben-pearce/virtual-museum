@@ -45,7 +45,7 @@ class Results extends React.Component {
       objects.push(this.createPreloadComponent());
     }
     this.setState({ objects: objects });
-    let requestUrl = new URL('/search', Config.apiBase);
+    let requestUrl = new URL('/search', Config.api.base);
     requestUrl.searchParams.set('page', this.paginatorPageCount);
     requestUrl.searchParams.set('limit', 
       Config.results.resultsPerPage);
@@ -67,7 +67,7 @@ class Results extends React.Component {
     return new Promise((resolve) => {
       for(let i in this.objectCache) {
         let object = this.objectCache[i];
-        let imageUrl = new URL(`/image/${object.id}/thumb`, Config.apiBase);
+        let imageUrl = new URL(`/image/${object.id}/thumb`, Config.api.base);
   
         let image = new Image();
         image.addEventListener('load', () => {
