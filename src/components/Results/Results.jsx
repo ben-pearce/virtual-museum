@@ -16,7 +16,7 @@ class Results extends React.Component {
     };
 
     this.objectCache = [];
-    this.objectImageCache = {};
+    this.objectThumbnailCache = {};
 
     this.scrollEventHandler = null;
     this.paginatorPageCount = 0;
@@ -75,15 +75,15 @@ class Results extends React.Component {
             resolve();
           }
         });
+        this.objectThumbnailCache[object.id] = image;
         image.src = imageUrl;
-        this.objectImageCache[object.id] = image;
       }
     });
   }
 
   allImagesLoaded() {
-    for(let i in this.objectImageCache) {
-      if(!this.objectImageCache[i].complete) {
+    for(let i in this.objectThumbnailCache) {
+      if(!this.objectThumbnailCache[i].complete) {
         return false;
       }
     }
@@ -97,7 +97,7 @@ class Results extends React.Component {
       .then(this.loadObjects.bind(this))
       .then(() => {
         this.objectCache = [];
-        this.objectImageCache = [];
+        this.objectThumbnailCache = [];
         this.paginatorPageCount += 1;
         this.scrollEventHandler = this.scrollWatcher.bind(this);
         window.addEventListener('scroll', this.scrollEventHandler);

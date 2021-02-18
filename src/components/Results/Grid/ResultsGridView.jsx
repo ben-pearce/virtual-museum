@@ -13,7 +13,7 @@ class ResultsGridView extends Results {
   }
 
   createLoadedComponent(object) {
-    let image = this.objectImageCache[object.id];
+    let image = this.objectThumbnailCache[object.id];
     return (<GridObject image={image} object={object} />);
   }
 

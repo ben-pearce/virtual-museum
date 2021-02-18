@@ -12,7 +12,7 @@ class ResultsListView extends Results {
   }
 
   createLoadedComponent(object) {
-    let image = this.objectImageCache[object.id];
+    let image = this.objectThumbnailCache[object.id];
     return (<ListObject image={image} object={object} />);
   }
 
