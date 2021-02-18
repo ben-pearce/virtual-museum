@@ -1,3 +1,7 @@
+html {
+  overflow-y: scroll;
+}
+
 body {
   font-family: 'Roboto', sans-serif;
 }
@@ -59,6 +63,7 @@ body {
   right: 0;
   margin: auto;
   transition: transform .2s;
+  border-radius: 0 !important;
 }
 
 .card:hover .grid-image-wrap img {
@@ -75,4 +80,18 @@ body {
 
 .list-object {
   width: 100%;
+}
+
+.sidebar {
+  padding-right: 0;
+}
+
+.sidebar .sticky-top {
+  top: 0.5em;
+}
+
+@include media-breakpoint-down(sm) { 
+  .sidebar {
+    padding-right: 15px;
+  }
 }

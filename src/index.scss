@@ -1,11 +1,16 @@
 /**
  * Import bootstrap CSS styles.
  */
-@import "~bootstrap/scss/bootstrap";
+@import '~bootstrap/scss/bootstrap';
 
 // ... Any bootstrap overrides will go here.
 
 /**
  * Import custom CSS styles.
  */
-@import "./App.css";
+@import './App.scss';
+
+/**
+ * Styles for splide image carousel.
+ */
+@import '@splidejs/splide/dist/css/themes/splide-default.min.css';

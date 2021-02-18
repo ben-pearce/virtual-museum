@@ -30,7 +30,7 @@ class Search extends React.Component {
   render() {
     return (
       <Row>
-        <Col md={4} lg={3}>
+        <Col md={4} lg={3} className='sidebar'>
           <div className="sticky-top">
             <Card className="mb-2">
               <Card.Header>Global Search</Card.Header>

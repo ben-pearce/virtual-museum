@@ -7,7 +7,6 @@ import {
   Redirect
 } from 'react-router-dom';
 
-import './App.css';
 import Container from 'react-bootstrap/Container';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import ProgressBar from 'react-bootstrap/ProgressBar';
