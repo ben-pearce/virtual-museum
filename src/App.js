@@ -4,7 +4,8 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect
+  Redirect,
+  Link
 } from 'react-router-dom';
 
 import Container from 'react-bootstrap/Container';
@@ -21,10 +22,10 @@ function App() {
     <Router>
       <Jumbotron fluid className='museumtron mb-0'>
         <Container fluid='lg'>
-          <div className='title'>
+          <Link to='/' className='title text-decoration-none'>
             <h1>{Config.site.name}</h1>
             <p>{Config.site.tagline}</p>
-          </div>
+          </Link>
         </Container>
       </Jumbotron>
       <ProgressBar variant='primary' now={0} className='mb-4 page-progress' />
