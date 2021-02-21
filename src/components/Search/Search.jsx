@@ -1,4 +1,7 @@
 import React from 'react';
+import { Helmet } from 'react-helmet';
+
+import PropTypes from 'prop-types';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -10,41 +13,84 @@ import Card from 'react-bootstrap/Card';
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 
+import Config from '../../museum.config';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faThLarge, faBars } from '@fortawesome/free-solid-svg-icons';
+import { 
+  faThLarge, 
+  faBars,
+  faSearch,
+  faFilter
+} from '@fortawesome/free-solid-svg-icons';
+
+import { withRouter } from 'react-router-dom';
 
 import ResultsGridView from '../Results/Grid/ResultsGridView';
 import ResultsListView from '../Results/List/ResultsListView';
 import FilterMenu from './FilterMenu';
 
 class Search extends React.Component {
+  static propTypes = {
+    history: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired
+  };
+
   constructor(props) {
     super(props);
-
 
     this.state = {
       resultsView: 'grid'
     };
   }
 
+  updateResultsList() {  
+    const queryBox = document.getElementById('search-query');
+    let searchQuery = queryBox.value;
+    if(searchQuery == '') {
+      searchQuery = null;
+    }
+
+    this.props.history.push({
+      search: `?q=${searchQuery}`
+    });
+  }
+
   render() {
+    let queryParams = new URLSearchParams(this.props.location.search);
+    let searchQuery = queryParams.get('q');
+
     return (
       <Row>
+        <Helmet>
+          <title>{searchQuery == null ? 
+            `Search Results - ${Config.site.name}` : 
+            `Search Results '${searchQuery}' - ${Config.site.name}`}
+          </title>
+        </Helmet>
         <Col md={4} lg={3} className='sidebar'>
-          <div className="sticky-top">
-            <Card className="mb-2">
-              <Card.Header>Global Search</Card.Header>
+          <div className='sticky-top'>
+            <Card className='mb-2'>
+              <Card.Header><FontAwesomeIcon icon={faSearch}/> Global Search</Card.Header>
               <Card.Body>
                 <InputGroup>
                   <FormControl
-                    placeholder="Search term or keyword"
-                    aria-label="Search term or keyword"
+                    id='search-query'
+                    placeholder='Search term or keyword'
+                    aria-label='Search term or keyword'
+                    defaultValue={searchQuery}
+                    onKeyUp={e => { if(e.keyCode === 13) { this.updateResultsList(); }}}
                   />
+                  <InputGroup.Append>
+                    <Button 
+                      variant='outline-secondary'
+                      onClick={this.updateResultsList.bind(this)}
+                    ><FontAwesomeIcon icon={faSearch} /></Button>
+                  </InputGroup.Append>
                 </InputGroup>
               </Card.Body>
             </Card>
-            <Card className="mb-2">
-              <Card.Header>Filter</Card.Header>
+            <Card className='mb-2'>
+              <Card.Header><FontAwesomeIcon icon={faFilter} /> Filter</Card.Header>
               <FilterMenu />
             </Card>
           </div>
@@ -78,11 +124,13 @@ class Search extends React.Component {
               </Button>
             </OverlayTrigger>
           </ButtonGroup>
-          {this.state.resultsView == 'grid' ? <ResultsGridView/> : <ResultsListView/>}
+          {this.state.resultsView == 'grid' ? 
+            <ResultsGridView query={searchQuery} /> : 
+            <ResultsListView query={searchQuery} />}
         </Col>
       </Row>
     );
   }
 }
 
-export default Search;
+export default withRouter(Search);

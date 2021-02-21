@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import axios from 'axios';
 import { Deserializer } from 'jsonapi-serializer';
@@ -7,6 +8,9 @@ import Config from '../../museum.config';
 
 
 class Results extends React.Component {
+  static propTypes = {
+    query: PropTypes.string
+  };
 
   constructor(props) {
     super(props);
@@ -20,12 +24,21 @@ class Results extends React.Component {
 
     this.scrollEventHandler = null;
     this.paginatorPageCount = 0;
+    this.searchQuery = props.query;
   }
 
   componentDidMount() {
     this.requestResultsObject();
   }
 
+  componentDidUpdate() {
+    if(this.props.query !== this.searchQuery) {
+      this.searchQuery = this.props.query;
+      this.paginatorPageCount = 0;
+      this.setState({ objects: [] }, this.requestResultsObject);
+    }
+  }
+  
   componentWillUnmount() {
     window.removeEventListener('scroll', this.scrollEventHandler);
   }
@@ -49,6 +62,10 @@ class Results extends React.Component {
     requestUrl.searchParams.set('page', this.paginatorPageCount);
     requestUrl.searchParams.set('limit', 
       Config.results.resultsPerPage);
+    if(this.searchQuery !== null) {
+      requestUrl.searchParams.set('q', this.searchQuery);
+    }
+    
     axios.get(requestUrl)
       .then(r => new Deserializer({keyForAttribute: 'camelCase'}).deserialize(r.data))
       .then(this.onRequestResultsObjectResponse.bind(this));
