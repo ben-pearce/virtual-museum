@@ -14,3 +14,9 @@
  * Styles for splide image carousel.
  */
 @import '@splidejs/splide/dist/css/themes/splide-default.min.css';
+
+.splide__slide img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
