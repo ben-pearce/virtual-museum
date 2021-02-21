@@ -78,6 +78,25 @@ body {
   overflow: hidden;
 }
 
+.person-description-wrap {
+  display: -webkit-box;
+  -webkit-line-clamp: 7;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+}
+
+.person-link-popover {
+  width: 20rem;
+}
+
+.person-link-popover p {
+  display: -webkit-box;
+  -webkit-line-clamp: 7;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+  margin: 0;
+}
+
 .list-object {
   width: 100%;
 }
