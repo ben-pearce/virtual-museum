@@ -15,7 +15,7 @@ import { faThLarge, faBars } from '@fortawesome/free-solid-svg-icons';
 
 import ResultsGridView from '../Results/Grid/ResultsGridView';
 import ResultsListView from '../Results/List/ResultsListView';
-import FilterMenu from '../FilterMenu';
+import FilterMenu from './FilterMenu';
 
 class Search extends React.Component {
   constructor(props) {
@@ -51,7 +51,7 @@ class Search extends React.Component {
         </Col>
         <Col>
           <ButtonGroup>
-            <Button variant="outline-dark" disabled>View: </Button>
+            <Button variant='outline-dark' disabled>View: </Button>
             <OverlayTrigger overlay={
               <Tooltip>
               View as grid
@@ -59,7 +59,7 @@ class Search extends React.Component {
             }>
               <Button 
                 onClick={() => this.setState({ resultsView: 'grid' })}
-                variant="secondary" 
+                variant='secondary' 
                 active={this.state.resultsView == 'grid'}>
                 <FontAwesomeIcon icon={faThLarge} />
               </Button>
@@ -72,7 +72,7 @@ class Search extends React.Component {
             }>
               <Button 
                 onClick={() => this.setState({ resultsView: 'list' })}
-                variant="secondary"
+                variant='secondary'
                 active={this.state.resultsView == 'list'}>
                 <FontAwesomeIcon icon={faBars} />
               </Button>

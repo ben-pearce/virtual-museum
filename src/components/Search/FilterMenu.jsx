@@ -91,7 +91,7 @@ class FilterMenu extends React.Component {
 
     if(depth == 0) {
       return (
-        <ListGroup className="list-group-flush">
+        <ListGroup className='list-group-flush'>
           {list}
         </ListGroup>
       );
