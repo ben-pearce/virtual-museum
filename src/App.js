@@ -16,6 +16,7 @@ import Config from './museum.config';
 
 import Search from './components/Search/Search';
 import Object from './components/Object/Object';
+import Person from './components/Person/Person';
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
             <Object />
           </Route>
           <Route path='/person/:personId'>
+            <Person />
           </Route>
           <Route path='/profile'>
           </Route>
