@@ -46,12 +46,14 @@ class Search extends React.Component {
   updateResultsList() {  
     const queryBox = document.getElementById('search-query');
     let searchQuery = queryBox.value;
-    if(searchQuery == '') {
-      searchQuery = null;
+
+    let queryParams = new URLSearchParams();
+    if(searchQuery !== '') {
+      queryParams.set('q', searchQuery);
     }
 
     this.props.history.push({
-      search: `?q=${searchQuery}`
+      search: `?${queryParams.toString()}`
     });
   }
 
