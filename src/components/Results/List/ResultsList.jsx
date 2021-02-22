@@ -4,7 +4,8 @@ import ListObject from './ListObject';
 
 import Row from 'react-bootstrap/Row';
 import Results from '../Results';
-
+import ResultsEnd from '../ResultsEnd';
+import ResultsEmpty from '../ResultsEmpty';
 
 class ResultsListView extends Results {
   createPreloadComponent() {
@@ -17,8 +18,15 @@ class ResultsListView extends Results {
   }
 
   render() {
-    return this.state.objects.map((object, i) => 
-      <Row className='pl-3 pr-3' key={i}>{object}</Row>);
+    if(this.state.objects.length === 0) {
+      return <ResultsEmpty/>;
+    }
+    return (
+      <>
+        {this.state.objects.map((object, i) => <Row className='pl-3 pr-3' key={i}>{object}</Row>)}
+        {this.state.resultsExhausted && <ResultsEnd/>}
+      </>
+    );
   }
 }
 

@@ -17,7 +17,8 @@ class Results extends React.Component {
     super(props);
 
     this.state = {
-      objects: []
+      objects: [],
+      resultsExhausted: false
     };
 
     this.objectCache = [];
@@ -25,7 +26,7 @@ class Results extends React.Component {
 
     this.scrollEventHandler = null;
     this.paginatorPageCount = 0;
-    this.totalObjects = 0;
+    this.totalObjects = Config.results.resultsPerPage;
     this.searchQuery = props.query;
   }
 
@@ -35,6 +36,7 @@ class Results extends React.Component {
 
   componentDidUpdate() {
     if(this.props.query !== this.searchQuery) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       this.reset();
     }
   }
@@ -47,9 +49,11 @@ class Results extends React.Component {
 
     this.scrollEventHandler = null;
     this.paginatorPageCount = 0;
+    this.totalObjects = Config.results.resultsPerPage;
     this.searchQuery = this.props.query;
     this.setState({ 
-      objects: [] 
+      objects: [],
+      resultsExhausted: false
     }, this.requestResultsObject);
   }
   
@@ -67,15 +71,15 @@ class Results extends React.Component {
   }
 
   requestResultsObject() {
+    let newObjectCount = Config.results.resultsPerPage % (this.totalObjects - Config.results.resultsPerPage * this.paginatorPageCount + 1);
     let objects = this.state.objects.slice();
-    for(let i = 0; i < Config.results.resultsPerPage; i++) {
+    for(let i = 0; i < newObjectCount; i++) {
       objects.push(this.createPreloadComponent());
     }
     this.setState({ objects: objects });
     let requestUrl = new URL('/search', Config.api.base);
     requestUrl.searchParams.set('page', this.paginatorPageCount);
-    requestUrl.searchParams.set('limit', 
-      Config.results.resultsPerPage);
+    requestUrl.searchParams.set('limit', newObjectCount);
     if(this.searchQuery !== null) {
       requestUrl.searchParams.set('q', this.searchQuery);
     }
@@ -84,9 +88,10 @@ class Results extends React.Component {
   }
 
   loadObjects() {
+    let newObjectCount = Config.results.resultsPerPage % (this.totalObjects - Config.results.resultsPerPage * this.paginatorPageCount + 1);
     return new Promise((resolve) => {
       let objects = this.state.objects.slice();
-      objects = objects.splice(0, objects.length - Config.results.resultsPerPage);
+      objects = objects.splice(0, objects.length - newObjectCount);
       objects = objects.concat(this.objectCache.map(this.createLoadedComponent, this));
       this.setState({ objects: objects }, resolve);
     });
@@ -120,24 +125,37 @@ class Results extends React.Component {
   }
 
   onRequestResultsObjectResponse(resp) {
-    new Deserializer({keyForAttribute: 'camelCase'}).deserialize(resp.data, (e, objects) => {
-      this.objectCache = objects;
-      this.loadObjectImages()
-        .then(this.loadObjects.bind(this))
-        .then(() => {
-          this.objectCache = [];
-          this.objectThumbnailCache = [];
-          this.paginatorPageCount += 1;
-          this.totalObjects = resp.data.meta.count;
-          this.scrollEventHandler = this.scrollWatcher.bind(this);
-          window.addEventListener('scroll', this.scrollEventHandler);
-
-          this.props.onResults({
-            objects: this.state.objects,
-            count: resp.data.meta.count
-          });
+    if(resp.data.meta.count == 0) {
+      this.setState({ objects: [] });
+      this.props.onResults({
+        objects: this.state.objects,
+        count: resp.data.meta.count
+      });
+    } else {
+      new Deserializer({keyForAttribute: 'camelCase'}).deserialize(resp.data)
+        .then((objects) => {
+          this.objectCache = objects;
+          this.loadObjectImages()
+            .then(this.loadObjects.bind(this))
+            .then(() => {
+              this.objectCache = [];
+              this.objectThumbnailCache = [];
+              this.paginatorPageCount += 1;
+              this.totalObjects = resp.data.meta.count;
+              if(Config.results.resultsPerPage * this.paginatorPageCount < this.totalObjects) {
+                this.scrollEventHandler = this.scrollWatcher.bind(this);
+                window.addEventListener('scroll', this.scrollEventHandler);
+              } else {
+                this.setState({ resultsExhausted: true });
+              }
+  
+              this.props.onResults({
+                objects: this.state.objects,
+                count: this.totalObjects
+              });
+            });
         });
-    });
+    }
   }
 
   createPreloadComponent() {
