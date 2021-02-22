@@ -25,8 +25,8 @@ import {
 
 import { withRouter } from 'react-router-dom';
 
-import ResultsGridView from '../Results/Grid/ResultsGridView';
-import ResultsListView from '../Results/List/ResultsListView';
+import ResultsGridView from '../Results/Grid/ResultsGrid';
+import ResultsListView from '../Results/List/ResultsList';
 import FilterMenu from './FilterMenu';
 
 class Search extends React.Component {
@@ -131,10 +131,8 @@ class Search extends React.Component {
               </Button>
             </OverlayTrigger>
           </ButtonGroup>
-          {this.state.resultsCount && 
-            <span className='text-muted ml-2 fs-4'>
-              {this.state.resultsCount > 0 ? `${this.state.resultsCount} results` : 'No results'}
-            </span>}
+          {this.state.resultsCount > 0 && 
+            <span className='text-muted ml-2 fs-4'>{this.state.resultsCount} results</span>}
           {this.state.resultsView == 'grid' ? 
             <ResultsGridView query={searchQuery} onResults={this.onResultsListUpdated.bind(this)} /> : 
             <ResultsListView query={searchQuery} onResults={this.onResultsListUpdated.bind(this)} />}
