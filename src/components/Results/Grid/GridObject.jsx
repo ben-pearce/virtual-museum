@@ -41,8 +41,8 @@ const GridObject = (props) => {
           {cardImage}
           <Card.Body>
             <Card.Title className='grid-title-wrap' title={object.name}>{object.name}</Card.Title>
-            <Card.Subtitle className='mb-2 text-muted'>{object.category.name}</Card.Subtitle>
-            <Card.Subtitle className='text-muted'>{dates}</Card.Subtitle>
+            <Card.Subtitle className='mb-2 text-muted grid-text-wrap'>{object.category.name}</Card.Subtitle>
+            <Card.Subtitle className='text-muted grid-text-wrap'>{dates}</Card.Subtitle>
           </Card.Body>
         </Card>
       </Link>

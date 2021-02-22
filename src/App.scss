@@ -78,6 +78,14 @@ body {
   overflow: hidden;
 }
 
+.grid-text-wrap {
+  height: 1.2em;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+}
+
 .person-description-wrap {
   display: -webkit-box;
   -webkit-line-clamp: 7;
