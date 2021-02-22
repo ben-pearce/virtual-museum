@@ -39,7 +39,8 @@ class Search extends React.Component {
     super(props);
 
     this.state = {
-      resultsView: 'grid'
+      resultsView: 'grid',
+      resultsCount: null
     };
   }
 
@@ -55,6 +56,10 @@ class Search extends React.Component {
     this.props.history.push({
       search: `?${queryParams.toString()}`
     });
+  }
+
+  onResultsListUpdated(e) {
+    this.setState({ resultsCount: e.count });
   }
 
   render() {
@@ -126,9 +131,13 @@ class Search extends React.Component {
               </Button>
             </OverlayTrigger>
           </ButtonGroup>
+          {this.state.resultsCount && 
+            <span className='text-muted ml-2 fs-4'>
+              {this.state.resultsCount > 0 ? `${this.state.resultsCount} results` : 'No results'}
+            </span>}
           {this.state.resultsView == 'grid' ? 
-            <ResultsGridView query={searchQuery} /> : 
-            <ResultsListView query={searchQuery} />}
+            <ResultsGridView query={searchQuery} onResults={this.onResultsListUpdated.bind(this)} /> : 
+            <ResultsListView query={searchQuery} onResults={this.onResultsListUpdated.bind(this)} />}
         </Col>
       </Row>
     );

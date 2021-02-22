@@ -9,7 +9,8 @@ import Config from '../../museum.config';
 
 class Results extends React.Component {
   static propTypes = {
-    query: PropTypes.string
+    query: PropTypes.string,
+    onResults: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -24,6 +25,7 @@ class Results extends React.Component {
 
     this.scrollEventHandler = null;
     this.paginatorPageCount = 0;
+    this.totalObjects = 0;
     this.searchQuery = props.query;
   }
 
@@ -66,9 +68,7 @@ class Results extends React.Component {
       requestUrl.searchParams.set('q', this.searchQuery);
     }
     
-    axios.get(requestUrl)
-      .then(r => new Deserializer({keyForAttribute: 'camelCase'}).deserialize(r.data))
-      .then(this.onRequestResultsObjectResponse.bind(this));
+    axios.get(requestUrl).then(this.onRequestResultsObjectResponse.bind(this));
   }
 
   loadObjects() {
@@ -108,17 +108,24 @@ class Results extends React.Component {
   }
 
   onRequestResultsObjectResponse(resp) {
-    this.objectCache = resp;
+    new Deserializer({keyForAttribute: 'camelCase'}).deserialize(resp.data, (e, objects) => {
+      this.objectCache = objects;
+      this.loadObjectImages()
+        .then(this.loadObjects.bind(this))
+        .then(() => {
+          this.objectCache = [];
+          this.objectThumbnailCache = [];
+          this.paginatorPageCount += 1;
+          this.totalObjects = resp.data.meta.count;
+          this.scrollEventHandler = this.scrollWatcher.bind(this);
+          window.addEventListener('scroll', this.scrollEventHandler);
 
-    this.loadObjectImages()
-      .then(this.loadObjects.bind(this))
-      .then(() => {
-        this.objectCache = [];
-        this.objectThumbnailCache = [];
-        this.paginatorPageCount += 1;
-        this.scrollEventHandler = this.scrollWatcher.bind(this);
-        window.addEventListener('scroll', this.scrollEventHandler);
-      });
+          this.props.onResults({
+            objects: this.state.objects,
+            count: resp.data.meta.count
+          });
+        });
+    });
   }
 
   createPreloadComponent() {
