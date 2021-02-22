@@ -35,10 +35,22 @@ class Results extends React.Component {
 
   componentDidUpdate() {
     if(this.props.query !== this.searchQuery) {
-      this.searchQuery = this.props.query;
-      this.paginatorPageCount = 0;
-      this.setState({ objects: [] }, this.requestResultsObject);
+      this.reset();
     }
+  }
+
+  reset() {
+    window.removeEventListener('scroll', this.scrollEventHandler);
+
+    this.objectCache = [];
+    this.objectThumbnailCache = [];
+
+    this.scrollEventHandler = null;
+    this.paginatorPageCount = 0;
+    this.searchQuery = this.props.query;
+    this.setState({ 
+      objects: [] 
+    }, this.requestResultsObject);
   }
   
   componentWillUnmount() {
