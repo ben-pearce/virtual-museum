@@ -17,12 +17,8 @@ class ResultsListView extends Results {
   }
 
   render() {
-    let rows = [];
-    for(let i in this.state.objects) {
-      let object = this.state.objects[i];
-      rows.push(<Row className='pl-3 pr-3' key={i}>{object}</Row>);
-    }
-    return (rows);
+    return this.state.objects.map((object, i) => 
+      <Row className='pl-3 pr-3' key={i}>{object}</Row>);
   }
 }
 

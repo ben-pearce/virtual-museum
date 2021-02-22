@@ -18,14 +18,11 @@ class ResultsGridView extends Results {
   }
 
   render() {
-    let cols = [];
-    for(let i in this.state.objects) {
-      let object = this.state.objects[i];
-      cols.push(<Col className='pl-1 pr-1' key={i}>{object}</Col>);
-    }
     return (
       <Row className='pl-2 pr-2' xs={1} md={2} lg={3}>
-        {cols}
+        {this.state.objects.map((object, i) => 
+          <Col className='pl-1 pr-1' key={i}>{object}</Col>
+        )}
       </Row>
     );
   }
