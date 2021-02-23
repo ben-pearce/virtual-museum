@@ -9,18 +9,15 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
-import Card from 'react-bootstrap/Card';
+import Form from 'react-bootstrap/Form';  
 import InputGroup from 'react-bootstrap/InputGroup';
-import FormControl from 'react-bootstrap/FormControl';
 
 import Config from '../../museum.config';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faThLarge, 
-  faBars,
-  faSearch,
-  faFilter
+  faBars
 } from '@fortawesome/free-solid-svg-icons';
 
 import { withRouter } from 'react-router-dom';
@@ -28,6 +25,7 @@ import { withRouter } from 'react-router-dom';
 import ResultsGridView from '../Results/Grid/ResultsGrid';
 import ResultsListView from '../Results/List/ResultsList';
 import FilterMenu from './FilterMenu';
+import QueryMenu from './QueryMenu';
 
 class Search extends React.Component {
   static propTypes = {
@@ -42,15 +40,25 @@ class Search extends React.Component {
       resultsView: 'grid',
       resultsCount: null
     };
+
+    this.searchQuery = null;
+    this.filterOptions = null;
+
+    this.handleUpdateQuery = this.handleUpdateQuery.bind(this);
+    this.handleUpdateFilter = this.handleUpdateFilter.bind(this);
+    this.handleUpdateResultsList = this.handleUpdateResultsList.bind(this);
   }
 
-  updateResultsList() {  
-    const queryBox = document.getElementById('search-query');
-    let searchQuery = queryBox.value;
+  updateResultsList() {
+    const queryParams = new URLSearchParams();
+    if(this.searchQuery !== null && this.searchQuery !== '') {
+      queryParams.set('q', this.searchQuery);
+    }
 
-    let queryParams = new URLSearchParams();
-    if(searchQuery !== '') {
-      queryParams.set('q', searchQuery);
+    if(this.filterOptions !== null) {
+      for(const [param, value] of Object.entries(this.filterOptions)) {
+        queryParams.set(param, Array.from(value).join(','));
+      }
     }
 
     this.props.history.push({
@@ -58,48 +66,33 @@ class Search extends React.Component {
     });
   }
 
-  onResultsListUpdated(e) {
+  handleUpdateQuery(q) {
+    this.searchQuery = q;
+    this.updateResultsList();
+  }
+
+  handleUpdateFilter(f) {
+    this.filterOptions = f;
+    this.updateResultsList();
+  }
+
+  handleUpdateResultsList(e) {
     this.setState({ resultsCount: e.count });
   }
 
   render() {
-    let queryParams = new URLSearchParams(this.props.location.search);
-    let searchQuery = queryParams.get('q');
-
     return (
       <Row>
         <Helmet>
-          <title>{searchQuery == null ? 
+          <title>{this.searchQuery == null ? 
             `Search Results - ${Config.site.name}` : 
-            `Search Results '${searchQuery}' - ${Config.site.name}`}
+            `Search Results '${this.searchQuery}' - ${Config.site.name}`}
           </title>
         </Helmet>
         <Col md={4} lg={3} className='sidebar'>
           <div className='sticky-top'>
-            <Card className='mb-2'>
-              <Card.Header><FontAwesomeIcon icon={faSearch}/> Global Search</Card.Header>
-              <Card.Body>
-                <InputGroup>
-                  <FormControl
-                    id='search-query'
-                    placeholder='Search term or keyword'
-                    aria-label='Search term or keyword'
-                    defaultValue={searchQuery}
-                    onKeyUp={e => { if(e.keyCode === 13) { this.updateResultsList(); }}}
-                  />
-                  <InputGroup.Append>
-                    <Button 
-                      variant='outline-secondary'
-                      onClick={this.updateResultsList.bind(this)}
-                    ><FontAwesomeIcon icon={faSearch} /></Button>
-                  </InputGroup.Append>
-                </InputGroup>
-              </Card.Body>
-            </Card>
-            <Card className='mb-2'>
-              <Card.Header><FontAwesomeIcon icon={faFilter} /> Filter</Card.Header>
-              <FilterMenu />
-            </Card>
+            <QueryMenu onSubmit={this.handleUpdateQuery} />
+            <FilterMenu onSubmit={this.handleUpdateFilter} />
           </div>
         </Col>
         <Col>
@@ -133,9 +126,30 @@ class Search extends React.Component {
           </ButtonGroup>
           {this.state.resultsCount > 0 && 
             <span className='text-muted ml-2 fs-4'>{this.state.resultsCount} results</span>}
-          {this.state.resultsView == 'grid' ? 
-            <ResultsGridView query={searchQuery} onResults={this.onResultsListUpdated.bind(this)} /> : 
-            <ResultsListView query={searchQuery} onResults={this.onResultsListUpdated.bind(this)} />}
+          <span className='float-right'>
+            <InputGroup>
+              <InputGroup.Prepend>
+                <InputGroup.Text>Sort By:</InputGroup.Text>
+              </InputGroup.Prepend>
+              <Form.Control as='select'>
+                <option>Relevance</option>
+                <option>Alphabetical (asc)</option>
+                <option>Alphabetical (dec)</option>
+                <option>Date (asc)</option>
+                <option>Date (dec)</option>
+              </Form.Control>
+            </InputGroup>
+          </span>
+          {this.searchQuery !== null && this.filterOptions !== null &&
+            this.state.resultsView == 'grid' ? 
+            <ResultsGridView 
+              query={this.searchQuery} 
+              onResults={this.handleUpdateResultsList} 
+            /> : 
+            <ResultsListView 
+              query={this.searchQuery} 
+              onResults={this.handleUpdateResultsList} 
+            />}
         </Col>
       </Row>
     );
