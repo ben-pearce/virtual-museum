@@ -16,6 +16,8 @@ import {
   faFilter
 } from '@fortawesome/free-solid-svg-icons';
 
+import Config from '../../museum.config';
+
 import { withRouter } from 'react-router-dom';
 
 class FilterMenu extends React.Component {
@@ -28,38 +30,6 @@ class FilterMenu extends React.Component {
     super(props);
 
     this.state = {
-      availableFilters: {
-        image: {
-          lang: 'Image',
-          options: [
-            { lang: 'Has Image', value: '1' },
-            { lang: 'No Image', value: '0' }
-          ]
-        },
-        category: {
-          lang: 'Category',
-          options: [
-            { lang: 'Computing & Data Processing', value: '0' }
-          ]
-        },
-        maker: {
-          lang: 'Maker',
-          options: []
-        },
-        place: {
-          lang: 'Place',
-          options: []
-        },
-        facility: {
-          lang: 'On Display',
-          options: []
-        },
-        date: {
-          lang: 'Date',
-          type: 'date',
-          options: []
-        }
-      },
       enabledFilters: new Object(),
       openDrawers: new Set()
     };
