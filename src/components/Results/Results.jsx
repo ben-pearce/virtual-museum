@@ -9,7 +9,7 @@ import Config from '../../museum.config';
 
 class Results extends React.Component {
   static propTypes = {
-    query: PropTypes.string,
+    params: PropTypes.object.isRequired,
     onResults: PropTypes.func.isRequired
   };
 
@@ -27,15 +27,14 @@ class Results extends React.Component {
     this.scrollEventHandler = null;
     this.paginatorPageCount = 0;
     this.totalObjects = Config.results.resultsPerPage;
-    this.searchQuery = props.query;
   }
 
   componentDidMount() {
     this.requestResultsObject();
   }
 
-  componentDidUpdate() {
-    if(this.props.query !== this.searchQuery) {
+  componentDidUpdate(prevProps) {
+    if(prevProps.params.toString() !== this.props.params.toString()) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       this.reset();
     }
@@ -50,7 +49,6 @@ class Results extends React.Component {
     this.scrollEventHandler = null;
     this.paginatorPageCount = 0;
     this.totalObjects = Config.results.resultsPerPage;
-    this.searchQuery = this.props.query;
     this.setState({ 
       objects: [],
       resultsExhausted: false
@@ -78,12 +76,12 @@ class Results extends React.Component {
     }
     this.setState({ objects: objects });
     const requestUrl = new URL('/search', Config.api.base);
-    requestUrl.searchParams.set('page', this.paginatorPageCount);
-    requestUrl.searchParams.set('limit', newObjectCount);
-    if(this.searchQuery !== null) {
-      requestUrl.searchParams.set('q', this.searchQuery);
-    }
-    
+    requestUrl.searchParams.set('page[number]', this.paginatorPageCount);
+    requestUrl.searchParams.set('page[size]', newObjectCount);
+    this.props.params.forEach((value, param) => {
+      requestUrl.searchParams.append(param, value);
+    });
+
     axios.get(requestUrl).then(this.onRequestResultsObjectResponse.bind(this));
   }
 

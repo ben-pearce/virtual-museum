@@ -43,6 +43,18 @@ class Search extends React.Component {
   }
 
   updateResultsList() {
+    const searchParams = this.getResultsSearchParams();
+
+    if(this.view !== 'grid') {
+      searchParams.set('view', this.view);
+    }
+
+    this.props.history.push({
+      search: `?${searchParams.toString()}`
+    });
+  }
+
+  getResultsSearchParams() {
     const searchParams = new URLSearchParams();
     if(this.query !== null && this.query !== '') {
       searchParams.set('q', this.query);
@@ -63,17 +75,11 @@ class Search extends React.Component {
       }
     }
 
-    if(this.view !== 'grid') {
-      searchParams.set('view', this.view);
-    }
-
     if(this.sort !== '0') {
       searchParams.set('sort', this.sort);
     }
 
-    this.props.history.push({
-      search: `?${searchParams.toString()}`
-    });
+    return searchParams;
   }
 
   handleUpdateQuery(q) {
@@ -97,7 +103,9 @@ class Search extends React.Component {
   }
 
   handleUpdateResultsList(e) {
-    this.setState({ resultsCount: e.count });
+    this.setState({ 
+      resultsCount: e.count 
+    });
   }
 
   render() {
@@ -129,11 +137,11 @@ class Search extends React.Component {
             this.sort !== null &&
             (this.view == 'grid' ? 
               <ResultsGridView 
-                query={this.query} 
+                params={this.getResultsSearchParams()}
                 onResults={this.handleUpdateResultsList} 
               /> : 
               <ResultsListView 
-                query={this.query} 
+                params={this.getResultsSearchParams()}
                 onResults={this.handleUpdateResultsList} 
               />)
           }

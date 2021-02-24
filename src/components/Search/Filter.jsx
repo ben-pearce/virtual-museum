@@ -49,7 +49,6 @@ class FilterMenu extends React.Component {
         for(const option of filter.options) {
           const param = `${key}[${option}]`;
           const value = searchParams.get(param);
-          console.log(`${param}:${value}`);
           if(value !== null) {
             if(!(key in enabledFilters)) {
               enabledFilters[key] = {};
