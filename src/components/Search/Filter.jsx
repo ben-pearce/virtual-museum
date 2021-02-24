@@ -38,12 +38,28 @@ class FilterMenu extends React.Component {
   componentDidMount() {
     const enabledFilters = new Object();
     const searchParams = new URLSearchParams(this.props.location.search);
-    for(const [param, value] of searchParams) {
-      if(param in this.state.availableFilters) {
-        const options = new Set(value.split(','));
-        enabledFilters[param] = options;
+
+    for(const [key, filter] of Object.entries(Config.results.availableFilters)) {
+      if(filter.type === undefined) {
+        const values = searchParams.getAll(key);
+        if(values.length > 0) {
+          enabledFilters[key] = new Set(values);
+        }
+      } else if(filter.type === 'date') {
+        for(const option of filter.options) {
+          const param = `${key}[${option}]`;
+          const value = searchParams.get(param);
+          console.log(`${param}:${value}`);
+          if(value !== null) {
+            if(!(key in enabledFilters)) {
+              enabledFilters[key] = {};
+            }
+            enabledFilters[key][option] = value;
+          }
+        }
       }
     }
+
     this.setState({ enabledFilters: enabledFilters });
   }
 
@@ -78,10 +94,50 @@ class FilterMenu extends React.Component {
     }));
   }
 
+  setFilterValue(key, option, value) {
+    let { [key]: enabledOptions, ...otherOptions } = this.state.enabledFilters;
+    enabledOptions = new Object(enabledOptions);
+
+    if(value) {
+      enabledOptions[option] = value;
+    } else if(option in enabledOptions) {
+      delete enabledOptions[option];
+    }
+
+    if(Object.keys(enabledOptions).length > 0) {
+      otherOptions = {
+        ...otherOptions,
+        [key]: enabledOptions
+      };
+    }
+
+    this.setState(prevState => ({
+      ...prevState,
+      enabledFilters: {
+        ...otherOptions
+      }
+    }));
+  }
+
+  getFilterValue(key, option) {
+    if(key in this.state.enabledFilters) {
+      const options = this.state.enabledFilters[key];
+      if(option in options) {
+        return options[option];
+      }
+    }
+    return '';
+  }
+
   clearFilter(key) {
     if(key === undefined) {
       this.setState({ enabledFilters: new Object() });
     } else {
+      if(Config.results.availableFilters[key].type === 'date') {
+        for(const option of Config.results.availableFilters[key].options) {
+          document.getElementById(option).value = '';
+        }
+      }
       const { ...enabledOptions } = this.state.enabledFilters;
       delete enabledOptions[key];
       this.setState(prevState => ({
@@ -128,7 +184,7 @@ class FilterMenu extends React.Component {
             >Clear All</Button>}
         </Card.Header>
         <ListGroup className='list-group-flush'>
-          {Object.entries(this.state.availableFilters).map(([k, f]) => 
+          {Object.entries(Config.results.availableFilters).map(([k, f]) => 
             <ListGroup.Item 
               key={k}
               action
@@ -169,12 +225,17 @@ class FilterMenu extends React.Component {
                   <InputGroup>
                     <Form.Control 
                       placeholder='From' 
+                      id='earliest'
+                      defaultValue={this.getFilterValue(k, 'earliest')}
+                      onBlur={(e) => this.setFilterValue(k, 'earliest', e.target.value)}
                       maxLength={4} />
                     <Form.Control 
                       placeholder='To' 
+                      id='latest'
+                      defaultValue={this.getFilterValue(k, 'latest')}
+                      onBlur={(e) => this.setFilterValue(k, 'latest', e.target.value)}
                       maxLength={4} />
-                  </InputGroup>
-                  }
+                  </InputGroup>}
                 </Form>
               </Collapse>
             </ListGroup.Item>

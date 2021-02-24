@@ -49,8 +49,17 @@ class Search extends React.Component {
     }
 
     if(this.filter !== null) {
-      for(const [param, value] of Object.entries(this.filter)) {
-        searchParams.set(param, Array.from(value).join(','));
+      for(const [key, values] of Object.entries(this.filter)) {
+        if(values instanceof Set) {
+          for(const value of values) {
+            searchParams.append(key, value);
+          }
+        } else if(values instanceof Object) {
+          for(const [option, value] of Object.entries(values)) {
+            const param = `${key}[${option}]`;
+            searchParams.set(param, value);
+          }
+        }
       }
     }
 
