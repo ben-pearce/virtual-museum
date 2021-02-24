@@ -16,33 +16,25 @@ const GridObject = (props) => {
     );
   } else {
     const object = props.object;
-    let cardImage;
-    if(props.image == undefined) {
-      cardImage = (
-        <div className='grid-image-wrap'></div>
-      );
-    } else {
-      cardImage = (
-        <div className='grid-image-wrap'>
-          <Card.Img variant='top' src={props.image.src}></Card.Img>
-        </div>
-      );
-    }
-
-    let dates = '';
-    if(object.creationEarliest & !object.creationLatest) {
-      dates = `${object.creationEarliest}`;
-    } else if(object.creationEarliest && object.creationLatest) {
-      dates = `${object.creationEarliest} - ${object.creationLatest}`;
-    }
     return (
       <Link to={`/object/${object.id}`}>
         <Card className='mb-2 mt-2'>
-          {cardImage}
+          {props.image === undefined ? 
+            <div className='grid-image-wrap'></div> :
+            <div className='grid-image-wrap'>
+              <Card.Img variant='top' src={props.image.src}></Card.Img>
+            </div>}
           <Card.Body>
             <Card.Title className='grid-title-wrap' title={object.name}>{object.name}</Card.Title>
             <Card.Subtitle className='mb-2 text-muted grid-text-wrap'>{object.category.name}</Card.Subtitle>
-            <Card.Subtitle className='text-muted grid-text-wrap'>{dates}</Card.Subtitle>
+            <Card.Subtitle className='text-muted grid-text-wrap'>{
+              (object.creationEarliest & !object.creationLatest) 
+                || (object.creationEarliest === object.creationLatest)? 
+                `${object.creationEarliest}` : 
+                (object.creationEarliest && object.creationLatest) ? 
+                  `${object.creationEarliest} - ${object.creationLatest}` : 
+                  ''}
+            </Card.Subtitle>
           </Card.Body>
         </Card>
       </Link>

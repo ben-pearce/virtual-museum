@@ -19,35 +19,28 @@ const ListObject = (props) => {
     );
   } else {
     const object = props.object;
-    let cardImage;
-    if(props.image == undefined) {
-      cardImage = (
-        <div className='grid-image-wrap'></div>
-      );
-    } else {
-      cardImage = (
-        <div className='grid-image-wrap'>
-          <Card.Img variant='top' src={props.image.src}></Card.Img>
-        </div>
-      );
-    }
-
-    let dates = '';
-    if(object.creationEarliest & !object.creationLatest) {
-      dates = `${object.creationEarliest}`;
-    } else if(object.creationEarliest && object.creationLatest) {
-      dates = `${object.creationEarliest} - ${object.creationLatest}`;
-    }
     return (
       <Link to={`/object/${object.id}`} className='list-object'>
         <Card className='mb-2 mt-2'>
           <Row>
-            <Col className='pr-0' xs={3}>{cardImage}</Col>
+            <Col className='pr-0' xs={3}>
+              {props.image === undefined ? 
+                <div className='grid-image-wrap'></div> :
+                <div className='grid-image-wrap'>
+                  <Card.Img variant='top' src={props.image.src}></Card.Img>
+                </div>}  
+            </Col>
             <Col className='pl-0'>
               <Card.Body>
                 <Card.Title title={object.name}>{object.name}</Card.Title>
                 <Card.Subtitle className='mb-2 text-muted'>{object.category.name}</Card.Subtitle>
-                <Card.Subtitle className='text-muted'>{dates}</Card.Subtitle>
+                <Card.Subtitle className='text-muted'>{
+                  (object.creationEarliest & !object.creationLatest) ? 
+                    `${object.creationEarliest}` : 
+                    (object.creationEarliest && object.creationLatest) ? 
+                      `${object.creationEarliest} - ${object.creationLatest}` : 
+                      ''}
+                </Card.Subtitle>
               </Card.Body>
             </Col>
           </Row>
