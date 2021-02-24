@@ -88,8 +88,8 @@ class ObjectPage extends React.Component {
   }
 
   requestObjectDetails() {
-    let objectId = this.props.match.params.objectId;
-    let requestUrl = new URL(`/object/${objectId}`, Config.api.base);
+    const objectId = this.props.match.params.objectId;
+    const requestUrl = new URL(`/object/${objectId}`, Config.api.base);
 
     axios.get(requestUrl)
       .then(r => new Deserializer({keyForAttribute: 'camelCase'}).deserialize(r.data))
@@ -98,11 +98,11 @@ class ObjectPage extends React.Component {
 
   loadObjectImages() {
     return new Promise((resolve) => {
-      for(let i in this.objectCache.collectionsObjectImages) {
-        let objectId = this.props.match.params.objectId;
-        let imageUrl = new URL(`/image/${objectId}/${i}`, Config.api.base);
+      for(const i in this.objectCache.collectionsObjectImages) {
+        const objectId = this.props.match.params.objectId;
+        const imageUrl = new URL(`/image/${objectId}/${i}`, Config.api.base);
 
-        let image = new Image();
+        const image = new Image();
         image.addEventListener('load', () => {
           if(this.allImagesLoaded()) {
             resolve();
@@ -117,7 +117,7 @@ class ObjectPage extends React.Component {
   }
 
   allImagesLoaded() {
-    for(let i in this.objectImageCache) { 
+    for(const i in this.objectImageCache) { 
       if(!this.objectImageCache[i].complete) {
         return false;
       }

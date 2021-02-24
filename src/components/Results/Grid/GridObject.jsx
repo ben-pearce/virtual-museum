@@ -15,7 +15,7 @@ const GridObject = (props) => {
       </Card>
     );
   } else {
-    let object = props.object;
+    const object = props.object;
     let cardImage;
     if(props.image == undefined) {
       cardImage = (

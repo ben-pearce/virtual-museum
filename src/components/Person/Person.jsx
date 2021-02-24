@@ -46,8 +46,8 @@ class Person extends React.Component {
   }
 
   requestPersonDetails() {
-    let personId = this.props.match.params.personId;
-    let requestUrl = new URL(`/person/${personId}`, Config.api.base);
+    const personId = this.props.match.params.personId;
+    const requestUrl = new URL(`/person/${personId}`, Config.api.base);
 
     axios.get(requestUrl)
       .then(r => new Deserializer({keyForAttribute: 'camelCase'}).deserialize(r.data))

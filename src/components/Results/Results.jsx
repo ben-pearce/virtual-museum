@@ -62,8 +62,8 @@ class Results extends React.Component {
   }
 
   scrollWatcher() {
-    let windowSize = document.body.clientHeight - window.innerHeight;
-    let scrollPageRemaining = (windowSize - document.documentElement.scrollTop);
+    const windowSize = document.body.clientHeight - window.innerHeight;
+    const scrollPageRemaining = (windowSize - document.documentElement.scrollTop);
     if(scrollPageRemaining < 50) {
       window.removeEventListener('scroll', this.scrollEventHandler);
       this.requestResultsObject();
@@ -71,13 +71,13 @@ class Results extends React.Component {
   }
 
   requestResultsObject() {
-    let newObjectCount = Config.results.resultsPerPage % (this.totalObjects - Config.results.resultsPerPage * this.paginatorPageCount + 1);
-    let objects = this.state.objects.slice();
+    const newObjectCount = Config.results.resultsPerPage % (this.totalObjects - Config.results.resultsPerPage * this.paginatorPageCount + 1);
+    const objects = this.state.objects.slice();
     for(let i = 0; i < newObjectCount; i++) {
       objects.push(this.createPreloadComponent());
     }
     this.setState({ objects: objects });
-    let requestUrl = new URL('/search', Config.api.base);
+    const requestUrl = new URL('/search', Config.api.base);
     requestUrl.searchParams.set('page', this.paginatorPageCount);
     requestUrl.searchParams.set('limit', newObjectCount);
     if(this.searchQuery !== null) {
@@ -88,7 +88,7 @@ class Results extends React.Component {
   }
 
   loadObjects() {
-    let newObjectCount = Config.results.resultsPerPage % (this.totalObjects - Config.results.resultsPerPage * this.paginatorPageCount + 1);
+    const newObjectCount = Config.results.resultsPerPage % (this.totalObjects - Config.results.resultsPerPage * this.paginatorPageCount + 1);
     return new Promise((resolve) => {
       let objects = this.state.objects.slice();
       objects = objects.splice(0, objects.length - newObjectCount);
@@ -99,11 +99,11 @@ class Results extends React.Component {
 
   loadObjectImages() {
     return new Promise((resolve) => {
-      for(let i in this.objectCache) {
-        let object = this.objectCache[i];
-        let imageUrl = new URL(`/image/${object.id}/thumb`, Config.api.base);
+      for(const i in this.objectCache) {
+        const object = this.objectCache[i];
+        const imageUrl = new URL(`/image/${object.id}/thumb`, Config.api.base);
   
-        let image = new Image();
+        const image = new Image();
         image.addEventListener('load', () => {
           if(this.allImagesLoaded()) {
             resolve();
@@ -116,7 +116,7 @@ class Results extends React.Component {
   }
 
   allImagesLoaded() {
-    for(let i in this.objectThumbnailCache) {
+    for(const i in this.objectThumbnailCache) {
       if(!this.objectThumbnailCache[i].complete) {
         return false;
       }

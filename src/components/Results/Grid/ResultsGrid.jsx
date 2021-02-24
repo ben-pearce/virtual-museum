@@ -14,7 +14,7 @@ class ResultsGridView extends Results {
   }
 
   createLoadedComponent(object) {
-    let image = this.objectThumbnailCache[object.id];
+    const image = this.objectThumbnailCache[object.id];
     return (<GridObject image={image} object={object} />);
   }
 

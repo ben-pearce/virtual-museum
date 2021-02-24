@@ -27,7 +27,7 @@ class PersonLink extends React.Component {
 
   requestPersonDetails() {
     if(this.state.person === null) {
-      let requestUrl = new URL(`/person/${this.props.person.id}`, Config.api.base);
+      const requestUrl = new URL(`/person/${this.props.person.id}`, Config.api.base);
 
       axios.get(requestUrl)
         .then(r => new Deserializer({keyForAttribute: 'camelCase'}).deserialize(r.data))

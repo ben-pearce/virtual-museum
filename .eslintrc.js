@@ -36,6 +36,10 @@ module.exports = {
       'error',
       'always'
     ],
+    'prefer-const': ['error', {
+      'destructuring': 'any',
+      'ignoreReadBeforeAssign': false
+    }],
     'jsx-quotes': ['error', 'prefer-single']
   }
 };

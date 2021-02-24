@@ -41,7 +41,7 @@ const ShareToolbar = () => {
               <Button 
                 variant='outline-secondary'
                 onClick={() => {
-                  let shareUrlInput = document.getElementById('sharePageUrl');
+                  const shareUrlInput = document.getElementById('sharePageUrl');
                   shareUrlInput.select();
                   document.execCommand('copy');
 
