@@ -48,7 +48,9 @@ class PersonLink extends React.Component {
             <div className='d-flex justify-content-center'>
               <Spinner animation='border' variant='dark' />
             </div> : 
-            <p>{this.state.person.note}</p>}
+            this.state.person.note !== null ? 
+              <p>{this.state.person.note}</p> : 
+              <p className='text-muted'>No description</p>}
         </Popover.Content>
       </Popover>
     );
