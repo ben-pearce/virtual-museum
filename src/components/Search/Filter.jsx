@@ -5,7 +5,9 @@ import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Collapse from 'react-bootstrap/Collapse';
 import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 import Badge from 'react-bootstrap/Badge';
+import Button from 'react-bootstrap/Button';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
@@ -44,8 +46,17 @@ class FilterMenu extends React.Component {
           lang: 'Maker',
           options: []
         },
+        place: {
+          lang: 'Place',
+          options: []
+        },
+        facility: {
+          lang: 'On Display',
+          options: []
+        },
         date: {
           lang: 'Date',
+          type: 'date',
           options: []
         }
       },
@@ -58,8 +69,10 @@ class FilterMenu extends React.Component {
     const enabledFilters = new Object();
     const searchParams = new URLSearchParams(this.props.location.search);
     for(const [param, value] of searchParams) {
-      const options = new Set(value.split(','));
-      enabledFilters[param] = options;
+      if(param in this.state.availableFilters) {
+        const options = new Set(value.split(','));
+        enabledFilters[param] = options;
+      }
     }
     this.setState({ enabledFilters: enabledFilters });
   }
@@ -136,14 +149,13 @@ class FilterMenu extends React.Component {
         <Card.Header><FontAwesomeIcon icon={faFilter} /> 
           <span> Filter</span>
           {this.isFilterEnabled() &&
-            <Badge
+            <Button
+              as={Badge}
               className='float-right'
               pill
               variant='dark'
               onClick={() => this.clearFilter()} 
-            >
-              Clear All
-            </Badge>}
+            >Clear All</Button>}
         </Card.Header>
         <ListGroup className='list-group-flush'>
           {Object.entries(this.state.availableFilters).map(([k, f]) => 
@@ -160,15 +172,17 @@ class FilterMenu extends React.Component {
               </span>
 
               {this.isFilterEnabled(k) &&
-              <span 
-                className='badge rounded-pill bg-dark text-light float-right'
+              <Button
+                as={Badge}
+                className='float-right'
+                pill
+                variant='dark'
                 onClick={this.clearFilter.bind(this, k)}
-              >
-                Clear
-              </span>}
+              >Clear</Button>}
 
               <Collapse in={this.state.openDrawers.has(k)}>
                 <Form>
+                  {f.type === undefined && 
                   <ul className='list-unstyled ml-2 mt-3'>
                     {f.options.map((o, j) => 
                       <li key={j}>
@@ -180,7 +194,17 @@ class FilterMenu extends React.Component {
                           onChange={this.toggleFilter.bind(this, k, o.value)}
                         />
                       </li>)}
-                  </ul>
+                  </ul>}
+                  {f.type === 'date' &&
+                  <InputGroup>
+                    <Form.Control 
+                      placeholder='From' 
+                      maxLength={4} />
+                    <Form.Control 
+                      placeholder='To' 
+                      maxLength={4} />
+                  </InputGroup>
+                  }
                 </Form>
               </Collapse>
             </ListGroup.Item>

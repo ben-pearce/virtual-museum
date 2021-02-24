@@ -31,7 +31,11 @@ class QueryMenu extends React.Component {
 
   componentDidMount() {
     const queryParams = new URLSearchParams(this.props.location.search);
-    const searchQuery = queryParams.get('q');
+    let searchQuery = queryParams.get('q');
+
+    if(searchQuery === null) {
+      searchQuery = '';
+    }
 
     this.setState({ query: searchQuery });
   }

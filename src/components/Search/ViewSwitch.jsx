@@ -1,0 +1,97 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Button from 'react-bootstrap/Button';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
+
+import { withRouter } from 'react-router-dom';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faThLarge, 
+  faBars
+} from '@fortawesome/free-solid-svg-icons';
+
+class ViewSwitchMenu extends React.Component {
+  static propTypes = {
+    location: PropTypes.object.isRequired,
+    onChange: PropTypes.func.isRequired
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      view: null
+    };
+
+    this.handleClickGridButton = this.handleClickGridButton.bind(this);
+    this.handleClickListButton = this.handleClickListButton.bind(this);
+  }
+
+  componentDidMount() {
+    const queryParams = new URLSearchParams(this.props.location.search);
+    let viewQuery = queryParams.get('view');
+
+    if(viewQuery === null) {
+      viewQuery = 'grid';
+    }
+
+    this.setState({ view: viewQuery });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if(prevState.view !== this.state.view) {
+      this.props.onChange(this.state.view);
+    }
+  }
+
+  handleClickGridButton() {
+    this.setState({
+      view: 'grid'
+    });
+  }
+
+  handleClickListButton() {
+    this.setState({
+      view: 'list'
+    });
+  }
+
+  render() {
+    return (
+      <ButtonGroup>
+        <Button variant='outline-dark' disabled>View: </Button>
+        <OverlayTrigger overlay={
+          <Tooltip>
+          View as grid
+          </Tooltip>
+        }>
+          <Button 
+            onClick={this.handleClickGridButton}
+            variant='secondary' 
+            active={this.state.view == 'grid'}>
+            <FontAwesomeIcon icon={faThLarge} />
+          </Button>
+        </OverlayTrigger>
+
+        <OverlayTrigger overlay={
+          <Tooltip>
+          View as list
+          </Tooltip>
+        }>
+          <Button 
+            onClick={this.handleClickListButton}
+            variant='secondary'
+            active={this.state.view == 'list'}>
+            <FontAwesomeIcon icon={faBars} />
+          </Button>
+        </OverlayTrigger>
+      </ButtonGroup>
+    );
+  }
+}
+
+export default withRouter(ViewSwitchMenu);

@@ -5,27 +5,17 @@ import PropTypes from 'prop-types';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import Button from 'react-bootstrap/Button';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
-import Form from 'react-bootstrap/Form';  
-import InputGroup from 'react-bootstrap/InputGroup';
 
 import Config from '../../museum.config';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faThLarge, 
-  faBars
-} from '@fortawesome/free-solid-svg-icons';
 
 import { withRouter } from 'react-router-dom';
 
 import ResultsGridView from '../Results/Grid/ResultsGrid';
 import ResultsListView from '../Results/List/ResultsList';
-import FilterMenu from './FilterMenu';
-import QueryMenu from './QueryMenu';
+import FilterMenu from './Filter';
+import QueryMenu from './Query';
+import ViewSwitchMenu from './ViewSwitch';
+import SortMenu from './Sort';
 
 class Search extends React.Component {
   static propTypes = {
@@ -37,42 +27,63 @@ class Search extends React.Component {
     super(props);
 
     this.state = {
-      resultsView: 'grid',
       resultsCount: null
     };
 
-    this.searchQuery = null;
-    this.filterOptions = null;
+    this.view = null;
+    this.query = null;
+    this.filter = null;
+    this.sort = null;
 
     this.handleUpdateQuery = this.handleUpdateQuery.bind(this);
     this.handleUpdateFilter = this.handleUpdateFilter.bind(this);
+    this.handleUpdateView = this.handleUpdateView.bind(this);
+    this.handleUpdateSort = this.handleUpdateSort.bind(this);
     this.handleUpdateResultsList = this.handleUpdateResultsList.bind(this);
   }
 
   updateResultsList() {
-    const queryParams = new URLSearchParams();
-    if(this.searchQuery !== null && this.searchQuery !== '') {
-      queryParams.set('q', this.searchQuery);
+    const searchParams = new URLSearchParams();
+    if(this.query !== null && this.query !== '') {
+      searchParams.set('q', this.query);
     }
 
-    if(this.filterOptions !== null) {
-      for(const [param, value] of Object.entries(this.filterOptions)) {
-        queryParams.set(param, Array.from(value).join(','));
+    if(this.filter !== null) {
+      for(const [param, value] of Object.entries(this.filter)) {
+        searchParams.set(param, Array.from(value).join(','));
       }
     }
 
+    if(this.view !== 'grid') {
+      searchParams.set('view', this.view);
+    }
+
+    if(this.sort !== '0') {
+      searchParams.set('sort', this.sort);
+    }
+
     this.props.history.push({
-      search: `?${queryParams.toString()}`
+      search: `?${searchParams.toString()}`
     });
   }
 
   handleUpdateQuery(q) {
-    this.searchQuery = q;
+    this.query = q;
     this.updateResultsList();
   }
 
   handleUpdateFilter(f) {
-    this.filterOptions = f;
+    this.filter = f;
+    this.updateResultsList();
+  }
+
+  handleUpdateView(v) {
+    this.view = v;
+    this.updateResultsList();
+  }
+
+  handleUpdateSort(s) {
+    this.sort = s;
     this.updateResultsList();
   }
 
@@ -84,9 +95,9 @@ class Search extends React.Component {
     return (
       <Row>
         <Helmet>
-          <title>{this.searchQuery == null ? 
-            `Search Results - ${Config.site.name}` : 
-            `Search Results '${this.searchQuery}' - ${Config.site.name}`}
+          <title>{this.query ? 
+            `Search Results '${this.query}' - ${Config.site.name}` :
+            `Search Results - ${Config.site.name}`}
           </title>
         </Helmet>
         <Col md={4} lg={3} className='sidebar'>
@@ -96,60 +107,27 @@ class Search extends React.Component {
           </div>
         </Col>
         <Col>
-          <ButtonGroup>
-            <Button variant='outline-dark' disabled>View: </Button>
-            <OverlayTrigger overlay={
-              <Tooltip>
-              View as grid
-              </Tooltip>
-            }>
-              <Button 
-                onClick={() => this.setState({ resultsView: 'grid' })}
-                variant='secondary' 
-                active={this.state.resultsView == 'grid'}>
-                <FontAwesomeIcon icon={faThLarge} />
-              </Button>
-            </OverlayTrigger>
-
-            <OverlayTrigger overlay={
-              <Tooltip>
-              View as list
-              </Tooltip>
-            }>
-              <Button 
-                onClick={() => this.setState({ resultsView: 'list' })}
-                variant='secondary'
-                active={this.state.resultsView == 'list'}>
-                <FontAwesomeIcon icon={faBars} />
-              </Button>
-            </OverlayTrigger>
-          </ButtonGroup>
+          <ViewSwitchMenu onChange={this.handleUpdateView} />
           {this.state.resultsCount > 0 && 
             <span className='text-muted ml-2 fs-4'>{this.state.resultsCount} results</span>}
           <span className='float-right'>
-            <InputGroup>
-              <InputGroup.Prepend>
-                <InputGroup.Text>Sort By:</InputGroup.Text>
-              </InputGroup.Prepend>
-              <Form.Control as='select'>
-                <option>Relevance</option>
-                <option>Alphabetical (asc)</option>
-                <option>Alphabetical (dec)</option>
-                <option>Date (asc)</option>
-                <option>Date (dec)</option>
-              </Form.Control>
-            </InputGroup>
+            <SortMenu onChange={this.handleUpdateSort} />
           </span>
-          {this.searchQuery !== null && this.filterOptions !== null &&
-            this.state.resultsView == 'grid' ? 
-            <ResultsGridView 
-              query={this.searchQuery} 
-              onResults={this.handleUpdateResultsList} 
-            /> : 
-            <ResultsListView 
-              query={this.searchQuery} 
-              onResults={this.handleUpdateResultsList} 
-            />}
+          {
+            this.view !== null && 
+            this.query !== null && 
+            this.filter !== null && 
+            this.sort !== null &&
+            (this.view == 'grid' ? 
+              <ResultsGridView 
+                query={this.query} 
+                onResults={this.handleUpdateResultsList} 
+              /> : 
+              <ResultsListView 
+                query={this.query} 
+                onResults={this.handleUpdateResultsList} 
+              />)
+          }
         </Col>
       </Row>
     );
