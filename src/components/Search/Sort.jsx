@@ -52,6 +52,7 @@ class SortMenu extends React.Component {
           <InputGroup.Text>Sort By:</InputGroup.Text>
         </InputGroup.Prepend>
         <Form.Control 
+          value={this.state.sort ? this.state.sort : 0}
           onChange={this.handleSelectionUpdate}
           as='select'>
           <option value={0}>Relevance</option>
