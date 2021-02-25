@@ -99,16 +99,21 @@ class Results extends React.Component {
     return new Promise((resolve) => {
       for(const i in this.objectCache) {
         const object = this.objectCache[i];
-        const imageUrl = new URL(`/image/${object.id}/thumb`, Config.api.base);
+        if(object.collectionsObjectImages.length > 0) {
+          const imageUrl = new URL(`/image/${object.id}/thumb`, Config.api.base);
   
-        const image = new Image();
-        image.addEventListener('load', () => {
-          if(this.allImagesLoaded()) {
-            resolve();
-          }
-        });
-        this.objectThumbnailCache[object.id] = image;
-        image.src = imageUrl;
+          const image = new Image();
+          image.addEventListener('load', () => {
+            if(this.allImagesLoaded()) {
+              resolve();
+            }
+          });
+          this.objectThumbnailCache[object.id] = image;
+          image.src = imageUrl;
+        }
+      }
+      if(Object.keys(this.objectThumbnailCache).length === 0) {
+        resolve();
       }
     });
   }
