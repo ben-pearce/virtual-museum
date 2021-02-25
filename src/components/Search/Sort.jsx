@@ -57,9 +57,9 @@ class SortMenu extends React.Component {
           as='select'>
           <option value={0}>Relevance</option>
           <option value={1}>Alphabetical (asc)</option>
-          <option value={2}>Alphabetical (dec)</option>
+          <option value={2}>Alphabetical (desc)</option>
           <option value={3}>Date (asc)</option>
-          <option value={4}>Date (dec)</option>
+          <option value={4}>Date (desc)</option>
         </Form.Control>
       </InputGroup>
     );
