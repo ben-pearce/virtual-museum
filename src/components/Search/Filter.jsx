@@ -31,7 +31,7 @@ class FilterMenu extends React.Component {
 
     this.state = {
       enabledFilters: new Object(),
-      openDrawers: new Set()
+      openDrawer: null
     };
   }
 
@@ -159,13 +159,11 @@ class FilterMenu extends React.Component {
   }
 
   toggleDrawer(key) {
-    const openDrawers = new Set(this.state.openDrawers);
-    if(openDrawers.has(key)) {
-      openDrawers.delete(key);
+    if(this.state.openDrawer === key) {
+      this.setState({ openDrawer: null });
     } else {
-      openDrawers.add(key);
+      this.setState({ openDrawer: key });
     }
-    this.setState({ openDrawers: openDrawers });
   }
 
   render() {
@@ -191,7 +189,7 @@ class FilterMenu extends React.Component {
               <span onClick={this.toggleDrawer.bind(this, k)}>
                 <FontAwesomeIcon 
                   fixedWidth={true}
-                  icon={this.state.openDrawers.has(k) ? faAngleDown : faAngleRight}
+                  icon={this.state.openDrawer === k ? faAngleDown : faAngleRight}
                 />  
                 <span>{f.lang}</span>
               </span>
@@ -205,7 +203,7 @@ class FilterMenu extends React.Component {
                 onClick={this.clearFilter.bind(this, k)}
               >Clear</Button>}
 
-              <Collapse in={this.state.openDrawers.has(k)}>
+              <Collapse in={this.state.openDrawer === k}>
                 <Form>
                   {f.type === undefined && 
                   <ul className='list-unstyled ml-2 mt-3'>
