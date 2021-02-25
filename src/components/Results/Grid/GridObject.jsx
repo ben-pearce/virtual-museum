@@ -28,8 +28,8 @@ const GridObject = (props) => {
             <Card.Title className='grid-title-wrap' title={object.name}>{object.name}</Card.Title>
             <Card.Subtitle className='mb-2 text-muted grid-text-wrap'>{object.category.name}</Card.Subtitle>
             <Card.Subtitle className='text-muted grid-text-wrap'>{
-              (object.creationEarliest & !object.creationLatest) 
-                || (object.creationEarliest === object.creationLatest)? 
+              (object.creationEarliest && !object.creationLatest) 
+                || (object.creationEarliest && object.creationEarliest === object.creationLatest)? 
                 `${object.creationEarliest}` : 
                 (object.creationEarliest && object.creationLatest) ? 
                   `${object.creationEarliest} - ${object.creationLatest}` : 

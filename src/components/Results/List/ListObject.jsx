@@ -35,7 +35,8 @@ const ListObject = (props) => {
                 <Card.Title title={object.name}>{object.name}</Card.Title>
                 <Card.Subtitle className='mb-2 text-muted'>{object.category.name}</Card.Subtitle>
                 <Card.Subtitle className='text-muted'>{
-                  (object.creationEarliest & !object.creationLatest) ? 
+                  (object.creationEarliest && !object.creationLatest) 
+                    || (object.creationEarliest && object.creationEarliest === object.creationLatest)? 
                     `${object.creationEarliest}` : 
                     (object.creationEarliest && object.creationLatest) ? 
                       `${object.creationEarliest} - ${object.creationLatest}` : 
