@@ -10,13 +10,12 @@ import {
 
 import Container from 'react-bootstrap/Container';
 import Jumbotron from 'react-bootstrap/Jumbotron';
-import ProgressBar from 'react-bootstrap/ProgressBar';
 
 import Config from './museum.config';
 
 import Search from './components/Search/Search';
-import Object from './components/Object/Object';
-import Person from './components/Person/Person';
+import Object from './components/Item/Object/Object';
+import Person from './components/Item/Person/Person';
 
 function App() {
   return (
