@@ -9,11 +9,11 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 
-import GridObject from '../Results/Grid/GridObject';
+import ObjectRow from '../ObjectRow';
 
 import axios from 'axios';
 
-import Config from '../../museum.config';
+import Config from '../../../museum.config';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
@@ -28,6 +28,10 @@ import { Deserializer } from 'jsonapi-serializer';
 
 import { withRouter } from 'react-router-dom';
 
+import ImagePreloader from '../../../imagePreloader';
+
+const PersonDeserializer = new Deserializer({keyForAttribute: 'camelCase'});
+
 class Person extends React.Component {
   static propTypes = {
     match: PropTypes.object.isRequired
@@ -37,7 +41,10 @@ class Person extends React.Component {
     super(props);
 
     this.state = {
-      person: null
+      person: null,
+
+      relatedObjects: null,
+      relatedImages: null
     };
   }
 
@@ -49,13 +56,26 @@ class Person extends React.Component {
     const personId = this.props.match.params.personId;
     const requestUrl = new URL(`/person/${personId}`, Config.api.base);
 
-    axios.get(requestUrl)
-      .then(r => new Deserializer({keyForAttribute: 'camelCase'}).deserialize(r.data))
-      .then(this.onRequestPersonDetailsResponse.bind(this));
+    axios.get(requestUrl).then(this.onRequestPersonDetailsResponse.bind(this));
   }
 
   onRequestPersonDetailsResponse(resp) {
-    this.setState({ person: resp });
+    PersonDeserializer.deserialize(resp.data).then((person) => {
+      PersonDeserializer.deserialize(resp.data.meta.relatedObjects).then((objects) => {
+        const imageUrls = objects.flatMap((object) => 
+          object.collectionsObjectImages.map((image, index) => 
+            new URL(`image/${object.id}/${index}`, Config.api.base)));
+        
+        new ImagePreloader().load(imageUrls)
+          .then((images) => {
+            this.setState({
+              person: person,
+              relatedObjects: objects,
+              relatedImages: images
+            });
+          });
+      });
+    });
   }
 
   render() {
@@ -71,7 +91,7 @@ class Person extends React.Component {
         <Helmet>
           <title>{`${this.state.person.name} - ${Config.site.name}`}</title>
         </Helmet>
-        <Row className='mb-2'>
+        <Row className='mb-4'>
           <Col md={4} lg={3} className='sidebar'>
             {this.state.person.birthDate &&
               <Card className='mb-2'>
@@ -98,10 +118,12 @@ class Person extends React.Component {
           </Col>
           <Col md={8} lg={9}>
             <h2 className='mb-3'><FontAwesomeIcon icon={faUser}/> {this.state.person.name}</h2>
-            {this.state.person.description && 
-            this.state.person.description.split('\n').map((item, key) => {
-              return <span key={key}>{item}<br/></span>;
-            })}
+            <p>
+              {this.state.person.description && 
+              this.state.person.description.split('\n').map((item, key) => {
+                return <span key={key}>{item}<br/></span>;
+              })}
+            </p>
             <a 
               href={this.state.person.collectionsUrl} 
               target='_blank' 
@@ -113,13 +135,8 @@ class Person extends React.Component {
           <Col xs={12}>
             <Card>
               <Card.Header>Related Objects</Card.Header>
-              <Card.Body>
-                <Row>
-                  <Col sm={12} md={3}><GridObject preload/></Col>
-                  <Col sm={12} md={3}><GridObject preload/></Col>
-                  <Col sm={12} md={3}><GridObject preload/></Col>
-                  <Col sm={12} md={3}><GridObject preload/></Col>
-                </Row>
+              <Card.Body className='pt-0 pb-0'>
+                <ObjectRow objects={this.state.relatedObjects} />
               </Card.Body>
             </Card>
           </Col>

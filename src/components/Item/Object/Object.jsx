@@ -9,13 +9,12 @@ import Card from 'react-bootstrap/Card';
 import Spinner from 'react-bootstrap/Spinner';
 import ListGroup from 'react-bootstrap/ListGroup';
 
-import GridObject from '../Results/Grid/GridObject';
-
 import axios from 'axios';
 
-import Config from '../../museum.config';
-import ShareToolbar from './ShareToolbar';
-import PersonLink from './PersonLink';
+import Config from '../../../museum.config';
+import ShareToolbar from '../ShareToolbar';
+import PersonLink from '../PersonLink';
+import ObjectRow from '../ObjectRow';
 
 import { Deserializer } from 'jsonapi-serializer';
 
@@ -34,6 +33,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import { Link, withRouter } from 'react-router-dom';
+
+import ImagePreloader from '../../../imagePreloader';
+
+const ObjectDeserializer = new Deserializer({keyForAttribute: 'camelCase'});
 
 class ObjectPage extends React.Component {
   static propTypes = {
@@ -72,67 +75,61 @@ class ObjectPage extends React.Component {
     super(props);
 
     this.state = {
-      object: null
-    };
+      object: null,
+      images: null,
 
-    this.objectCache = null;
-    this.objectImageCache = [];
+      relatedObjects: null
+    };
 
     this.primarySplideRef = React.createRef();
     this.secondarySplideRef = React.createRef();
-
   }
 
   componentDidMount() {
     this.requestObjectDetails();
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if(this.state.object === null) {
+      //this.requestObjectDetails();
+    }
+
+    if(prevProps.match.params.objectId !== this.props.match.params.objectId) {
+      this.setState({ 
+        object: null,
+        images: null,
+        relatedObjects: null
+      });
+      this.requestObjectDetails();
+    }
+
+    if(prevState.object === null && this.state.object !== null && this.state.images.length > 0) {
+      this.primarySplideRef.current.sync(this.secondarySplideRef.current.splide);
+    }
+  }
+
   requestObjectDetails() {
     const objectId = this.props.match.params.objectId;
     const requestUrl = new URL(`/object/${objectId}`, Config.api.base);
 
-    axios.get(requestUrl)
-      .then(r => new Deserializer({keyForAttribute: 'camelCase'}).deserialize(r.data))
-      .then(this.onRequestObjectDetailsResponse.bind(this));
-  }
-
-  loadObjectImages() {
-    return new Promise((resolve) => {
-      for(const i in this.objectCache.collectionsObjectImages) {
-        const objectId = this.props.match.params.objectId;
-        const imageUrl = new URL(`/image/${objectId}/${i}`, Config.api.base);
-
-        const image = new Image();
-        image.addEventListener('load', () => {
-          if(this.allImagesLoaded()) {
-            resolve();
-          }
-        });
-
-        this.objectImageCache.push(image);
-        image.src = imageUrl;
-      }
-      resolve();
-    });
-  }
-
-  allImagesLoaded() {
-    for(const i in this.objectImageCache) { 
-      if(!this.objectImageCache[i].complete) {
-        return false;
-      }
-    }
-    return true;
+    axios.get(requestUrl).then(this.onRequestObjectDetailsResponse.bind(this));
   }
 
   onRequestObjectDetailsResponse(resp) {
-    this.objectCache = resp;
-    
-    this.loadObjectImages()
-      .then(() => this.setState({ object: this.objectCache }, () => {
-        // Sync primary splide with thumbnail splide
-        this.primarySplideRef.current.sync(this.secondarySplideRef.current.splide);
-      }));
+    ObjectDeserializer.deserialize(resp.data).then((object) => {
+      const imageUrls = object.collectionsObjectImages.map((image, index) => 
+        new URL(`image/${object.id}/${index}`, Config.api.base));
+
+      new ImagePreloader().load(imageUrls)
+        .then((images) => {
+          ObjectDeserializer.deserialize(resp.data.meta.relatedObjects).then((objects) => 
+            this.setState({
+              object: object,
+              images: images,
+              relatedObjects: objects
+            }));
+        });
+    });
   }
 
   render() {
@@ -147,7 +144,7 @@ class ObjectPage extends React.Component {
         <Helmet>
           <title>{`${this.state.object.name} - ${Config.site.name}`}</title>
         </Helmet>
-        <Row className='mb-2'>
+        <Row className='mb-4'>
           <Col md={4} lg={3} className='sidebar'>
             <Card className='mb-2'>
               <Card.Header><FontAwesomeIcon icon={faFingerprint}/> Accession No.</Card.Header>
@@ -223,21 +220,23 @@ class ObjectPage extends React.Component {
           </Col>
           <Col md={8} lg={9}>
             <ShareToolbar object={this.state.object} />
-            <Card className='mb-3'>
-              <Card.Body>
-                <Splide options={ObjectPage.primaryOptions} ref={this.primarySplideRef} className='mb-2'>
-                  {this.objectImageCache.map((image, i) => {
-                    return <SplideSlide key={i}><img height='100%' src={image.src}/></SplideSlide>;
-                  })}
-                </Splide>
-                <Splide options={ObjectPage.secondaryOptions} ref={this.secondarySplideRef}>
-                  {this.objectImageCache.map((image, i) => {
-                    return <SplideSlide key={i}><img height='100%' src={image.src}/></SplideSlide>;
-                  })}
-                </Splide>
-              </Card.Body>
-            </Card>
-            <h2 className='mb-3'><FontAwesomeIcon icon={faCube}/> {this.state.object.name}</h2>
+            {this.state.images.length > 0 &&
+              <Card>
+                <Card.Body>
+                  <Splide options={ObjectPage.primaryOptions} ref={this.primarySplideRef} className='mb-2'>
+                    {this.state.images.map((image, i) => {
+                      return <SplideSlide key={i}><img height='100%' src={image.src}/></SplideSlide>;
+                    })}
+                  </Splide>
+                  <Splide options={ObjectPage.secondaryOptions} ref={this.secondarySplideRef}>
+                    {this.state.images.map((image, i) => {
+                      return <SplideSlide key={i}><img height='100%' src={image.src}/></SplideSlide>;
+                    })}
+                  </Splide>
+                </Card.Body>
+              </Card>
+            }
+            <h2 className='mb-3 mt-3'><FontAwesomeIcon icon={faCube}/> {this.state.object.name}</h2>
             <p>From <Link to={`/search?category=${this.state.object.category.id}`}>{this.state.object.category.name}</Link></p>
             <p>{this.state.object.description}</p>
             <a 
@@ -251,13 +250,8 @@ class ObjectPage extends React.Component {
           <Col xs={12}>
             <Card>
               <Card.Header>Related Objects</Card.Header>
-              <Card.Body>
-                <Row>
-                  <Col sm={12} md={3}><GridObject preload/></Col>
-                  <Col sm={12} md={3}><GridObject preload/></Col>
-                  <Col sm={12} md={3}><GridObject preload/></Col>
-                  <Col sm={12} md={3}><GridObject preload/></Col>
-                </Row>
+              <Card.Body className='pt-0 pb-0'>
+                <ObjectRow objects={this.state.relatedObjects} />
               </Card.Body>
             </Card>
           </Col>
