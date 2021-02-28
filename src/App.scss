@@ -13,12 +13,12 @@ body {
       rgba(39,142,255,1) 11.2%,
       rgba(98,113,255,0.78) 100.2%
     );
+  border-bottom: 5px solid #dbdbdb;
 }
 
 .museumtron .title {
   font-family: 'Heebo', sans-serif;
   color: white;
-  background-color: rgba(255, 255, 255, 0.3);
   padding: 20px;
   margin: 0;
   display: block;
@@ -51,6 +51,11 @@ body {
     rgba(39,142,255,1) 11.2%,
     rgba(98,113,255,0.78) 100.2%
   );
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 2rem;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .grid-image-wrap img {
@@ -66,8 +71,14 @@ body {
   border-radius: 0 !important;
 }
 
-.card:hover .grid-image-wrap img {
+.grid-object:hover .grid-image-wrap img,
+.list-object:hover .grid-image-wrap img {
   transform: scale(1.5);
+}
+
+.grid-object a,
+.list-object a {
+  text-decoration: none;
 }
 
 .grid-title-wrap {

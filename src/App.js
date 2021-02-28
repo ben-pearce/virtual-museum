@@ -20,7 +20,7 @@ import Person from './components/Item/Person/Person';
 function App() {
   return (
     <Router>
-      <Jumbotron fluid className='museumtron mb-0'>
+      <Jumbotron fluid className='museumtron'>
         <Container fluid='lg'>
           <Link to='/' className='title text-decoration-none'>
             <h1>{Config.site.name}</h1>
@@ -28,7 +28,6 @@ function App() {
           </Link>
         </Container>
       </Jumbotron>
-      <ProgressBar variant='primary' now={0} className='mb-4 page-progress' />
       <Container fluid='lg'>
         <Switch>
           <Route exact path='/'>
