@@ -13,7 +13,7 @@ class ResultsListView extends Results {
   }
 
   createLoadedComponent(object) {
-    const image = this.objectThumbnailCache[object.id];
+    const image = this.images[this.objectCache.indexOf(object)];
     return (<ListObject image={image} object={object} />);
   }
 

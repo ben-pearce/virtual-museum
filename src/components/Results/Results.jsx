@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { Deserializer } from 'jsonapi-serializer';
 
+import ImagePreloader from '../../imagePreloader';
+
 import Config from '../../museum.config';
 
 
@@ -22,7 +24,7 @@ class Results extends React.Component {
     };
 
     this.objectCache = [];
-    this.objectThumbnailCache = {};
+    this.images = [];
 
     this.scrollEventHandler = null;
     this.paginatorPageCount = 0;
@@ -44,7 +46,7 @@ class Results extends React.Component {
     window.removeEventListener('scroll', this.scrollEventHandler);
 
     this.objectCache = [];
-    this.objectThumbnailCache = [];
+    this.images = [];
 
     this.scrollEventHandler = null;
     this.paginatorPageCount = 0;
@@ -95,38 +97,6 @@ class Results extends React.Component {
     });
   }
 
-  loadObjectImages() {
-    return new Promise((resolve) => {
-      for(const i in this.objectCache) {
-        const object = this.objectCache[i];
-        if(object.collectionsObjectImages.length > 0) {
-          const imageUrl = new URL(`/image/${object.id}/thumb`, Config.api.base);
-  
-          const image = new Image();
-          image.addEventListener('load', () => {
-            if(this.allImagesLoaded()) {
-              resolve();
-            }
-          });
-          this.objectThumbnailCache[object.id] = image;
-          image.src = imageUrl;
-        }
-      }
-      if(Object.keys(this.objectThumbnailCache).length === 0) {
-        resolve();
-      }
-    });
-  }
-
-  allImagesLoaded() {
-    for(const i in this.objectThumbnailCache) {
-      if(!this.objectThumbnailCache[i].complete) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   onRequestResultsObjectResponse(resp) {
     if(resp.data.meta.count == 0) {
       this.setState({ objects: [] });
@@ -137,12 +107,13 @@ class Results extends React.Component {
     } else {
       new Deserializer({keyForAttribute: 'camelCase'}).deserialize(resp.data)
         .then((objects) => {
+          const imageUrls = objects.map((object) => new URL(`image/${object.id}/thumb`, Config.api.base));
           this.objectCache = objects;
-          this.loadObjectImages()
-            .then(this.loadObjects.bind(this))
-            .then(() => {
+          new ImagePreloader().load(imageUrls).then((images) => {
+            this.images = images;
+            this.loadObjects().then(() => {
               this.objectCache = [];
-              this.objectThumbnailCache = [];
+              this.images = [];
               this.paginatorPageCount += 1;
               this.totalObjects = resp.data.meta.count;
               if(Config.results.resultsPerPage * this.paginatorPageCount < this.totalObjects) {
@@ -157,6 +128,7 @@ class Results extends React.Component {
                 count: this.totalObjects
               });
             });
+          });
         });
     }
   }
