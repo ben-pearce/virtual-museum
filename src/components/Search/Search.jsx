@@ -124,12 +124,19 @@ class Search extends React.Component {
           </div>
         </Col>
         <Col>
-          <ViewSwitchMenu onChange={this.handleUpdateView} />
-          {this.state.resultsCount > 0 && 
-            <span className='text-muted ml-2 fs-4'>{this.state.resultsCount} results</span>}
-          <span className='float-right'>
-            <SortMenu onChange={this.handleUpdateSort} />
-          </span>
+          <div className='d-flex flex-wrap'>
+            <div>
+              <ViewSwitchMenu onChange={this.handleUpdateView} />
+            </div>
+            <div className='flex-grow-1 align-self-center'>
+              {this.state.resultsCount > 0 && 
+                <span className='text-muted ml-2 fs-4'>{this.state.resultsCount} results</span>}
+            </div>
+            <div>
+              <SortMenu onChange={this.handleUpdateSort} />
+            </div>
+          </div>
+          
           {
             this.view !== null && 
             this.query !== null && 
