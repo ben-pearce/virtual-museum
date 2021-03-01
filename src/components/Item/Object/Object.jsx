@@ -90,10 +90,6 @@ class ObjectPage extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if(this.state.object === null) {
-      //this.requestObjectDetails();
-    }
-
     if(prevProps.match.params.objectId !== this.props.match.params.objectId) {
       this.setState({ 
         object: null,
