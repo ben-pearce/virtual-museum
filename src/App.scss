@@ -126,6 +126,7 @@ body {
 
 .sidebar .sticky-top {
   top: 0.5em;
+  padding-bottom: 0.5em;
 }
 
 @include media-breakpoint-down(sm) { 
