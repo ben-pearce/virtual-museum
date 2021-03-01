@@ -27,9 +27,9 @@ class ObjectRow extends React.Component {
   }
 
   componentDidMount() {
-    const imageUrls = this.props.objects.flatMap((object) => 
-      object.collectionsObjectImages.map((image, index) => 
-        new URL(`image/${object.id}/${index}`, Config.api.base)));
+    const imageUrls = this.props.objects.map((object) => 
+      new URL(`image/${object.id}/thumb`, Config.api.base));
+      
     new ImagePreloader().load(imageUrls)
       .then((images) => {
         this.setState({
