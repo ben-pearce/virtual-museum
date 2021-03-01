@@ -20,8 +20,6 @@ class ObjectRow extends React.Component {
   constructor(props) {
     super(props);
 
-    console.log(props.objects);
-
     this.state = {
       objects: null,
       images: null
