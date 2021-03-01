@@ -129,6 +129,10 @@ body {
   padding-bottom: 0.5em;
 }
 
+.modal-open{ 
+  padding-right:0px !important;
+}
+
 @include media-breakpoint-down(sm) { 
   .sidebar {
     padding-right: 15px;
