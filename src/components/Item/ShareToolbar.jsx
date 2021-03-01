@@ -18,8 +18,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faStar as emptyStar } from '@fortawesome/free-regular-svg-icons';
 
+import Config from '../../museum.config';
 
-const ShareToolbar = () => {
+
+const ShareToolbar = (props) => {
 
   const sharePopover = (
     <Popover>
@@ -67,6 +69,8 @@ const ShareToolbar = () => {
         size='sm' 
         variant='outline-dark' 
         className='mr-1'
+        href={new URL(`/object/${props.object.id}`, Config.api.base).toString()}
+        target='_blank'
       ><FontAwesomeIcon icon={faCode} /> JSON</Button>
       <Button 
         size='sm' 
