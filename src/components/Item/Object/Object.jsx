@@ -8,6 +8,11 @@ import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Spinner from 'react-bootstrap/Spinner';
 import ListGroup from 'react-bootstrap/ListGroup';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+import Image from 'react-bootstrap/Image';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 
 import axios from 'axios';
 
@@ -29,7 +34,8 @@ import {
   faUser,
   faUsers,
   faExternalLinkAlt,
-  faCalendarAlt
+  faCalendarAlt,
+  faSave
 } from '@fortawesome/free-solid-svg-icons';
 
 import { Link, withRouter } from 'react-router-dom';
@@ -78,11 +84,17 @@ class ObjectPage extends React.Component {
       object: null,
       images: null,
 
-      relatedObjects: null
+      relatedObjects: null,
+
+      imageModal: false,
+      imageModalSrc: null
     };
 
     this.primarySplideRef = React.createRef();
     this.secondarySplideRef = React.createRef();
+
+    this.handleCloseImageModal = this.handleCloseImageModal.bind(this);
+    this.handleOpenImageModal = this.handleOpenImageModal.bind(this);
   }
 
   componentDidMount() {
@@ -128,6 +140,19 @@ class ObjectPage extends React.Component {
     });
   }
 
+  handleCloseImageModal() {
+    this.setState({
+      imageModal: false
+    });
+  }
+
+  handleOpenImageModal(e) {
+    this.setState({
+      imageModal: true,
+      imageModalSrc: e.target.src
+    });
+  }
+
   render() {
     if(this.state.object === null) {
       return (
@@ -140,16 +165,46 @@ class ObjectPage extends React.Component {
         <Helmet>
           <title>{`${this.state.object.name} - ${Config.site.name}`}</title>
         </Helmet>
+        <Modal 
+          show={this.state.imageModal} 
+          onHide={this.handleCloseImageModal} 
+          animation={false} 
+          size='xl'>
+          <Modal.Header closeButton>
+            <OverlayTrigger
+              placement='bottom'
+              overlay={<Tooltip>Save Image</Tooltip>}>
+              <Button 
+                variant='outline-secondary' 
+                size='sm' 
+                href={this.state.imageModalSrc} 
+                download='image.jpg'>
+                <FontAwesomeIcon icon={faSave} />
+              </Button>
+            </OverlayTrigger>
+          </Modal.Header>
+          <Modal.Body>
+            <Image 
+              src={this.state.imageModalSrc} 
+              onClick={this.handleCloseImageModal} 
+              style={{cursor: 'zoom-out'}} 
+              fluid />
+          </Modal.Body>
+        </Modal>
         <Row className='mb-4'>
           <Col md={4} lg={3} className='sidebar'>
             <Card className='mb-2'>
-              <Card.Header><FontAwesomeIcon icon={faFingerprint}/> Accession No.</Card.Header>
+              <Card.Header>
+                <FontAwesomeIcon icon={faFingerprint}/> Accession No.
+              </Card.Header>
               <Card.Body>
                 <pre className='m-0'>{this.state.object.accession}</pre>
               </Card.Body>
             </Card>
             <Card className='mb-2'>
-              <Card.Header><FontAwesomeIcon icon={faMapMarkerAlt}/> Displayed at</Card.Header>
+              <Card.Header>
+                <FontAwesomeIcon icon={faMapMarkerAlt}/> Displayed at
+              </Card.Header>
               <Card.Body>
                 {this.state.object.facility === null ? 
                   <p className='text-muted m-0'>This object is not currently on display.</p> : 
@@ -168,7 +223,8 @@ class ObjectPage extends React.Component {
                   {this.state.object.creationEarliest && this.state.object.creationLatest && 
                   (this.state.object.creationEarliest !== this.state.object.creationLatest) ?
                     <Link 
-                      to={`/search?creation[earliest]=${this.state.object.creationEarliest}&creation[latest]=${this.state.object.creationLatest}`}
+                      to={`/search?creation[earliest]=${this.state.object.creationEarliest}
+                      &creation[latest]=${this.state.object.creationLatest}`}
                     >
                       {this.state.object.creationEarliest} - {this.state.object.creationLatest}
                     </Link> :
@@ -215,24 +271,41 @@ class ObjectPage extends React.Component {
             </Card>}
           </Col>
           <Col md={8} lg={9}>
-            <ShareToolbar object={this.state.object} />
+            <div className='d-flex justify-content-end'>
+              <ShareToolbar object={this.state.object} />
+            </div>
             {this.state.images.length > 0 &&
               <Card>
                 <Card.Body>
-                  <Splide options={ObjectPage.primaryOptions} ref={this.primarySplideRef} className='mb-2'>
+                  <Splide 
+                    options={ObjectPage.primaryOptions} 
+                    ref={this.primarySplideRef} 
+                    className='mb-2'>
                     {this.state.images.map((image, i) => {
-                      return <SplideSlide key={i}><img height='100%' src={image.src}/></SplideSlide>;
+                      return <SplideSlide key={i}>
+                        <Image 
+                          height='100%' 
+                          src={image.src} 
+                          onClick={this.handleOpenImageModal} 
+                          style={{cursor: 'zoom-in'}}/>
+                      </SplideSlide>;
                     })}
                   </Splide>
-                  <Splide options={ObjectPage.secondaryOptions} ref={this.secondarySplideRef}>
+                  <Splide 
+                    options={ObjectPage.secondaryOptions} 
+                    ref={this.secondarySplideRef}>
                     {this.state.images.map((image, i) => {
-                      return <SplideSlide key={i}><img height='100%' src={image.src}/></SplideSlide>;
+                      return <SplideSlide key={i}>
+                        <Image height='100%' src={image.src}/>
+                      </SplideSlide>;
                     })}
                   </Splide>
                 </Card.Body>
               </Card>
             }
-            <h2 className='mb-3 mt-3'><FontAwesomeIcon icon={faCube}/> {this.state.object.name}</h2>
+            <h2 className='mb-3 mt-3'>
+              <FontAwesomeIcon icon={faCube}/> {this.state.object.name}
+            </h2>
             <p>From <Link to={`/search?category=${this.state.object.category.id}`}>{this.state.object.category.name}</Link></p>
             <p>{this.state.object.description}</p>
             <a 
