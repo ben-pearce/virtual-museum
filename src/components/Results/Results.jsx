@@ -77,14 +77,15 @@ class Results extends React.Component {
       objects.push(this.createPreloadComponent());
     }
     this.setState({ objects: objects });
-    const requestUrl = new URL('/search', Config.api.base);
-    requestUrl.searchParams.set('page[number]', this.paginatorPageCount);
-    requestUrl.searchParams.set('page[size]', newObjectCount);
+    const searchParams = new URLSearchParams();
+    searchParams.set('page[number]', this.paginatorPageCount);
+    searchParams.set('page[size]', newObjectCount);
     this.props.params.forEach((value, param) => {
-      requestUrl.searchParams.append(param, value);
+      searchParams.append(param, value);
     });
 
-    axios.get(requestUrl).then(this.onRequestResultsObjectResponse.bind(this));
+    axios.get('/search', { baseURL: Config.api.base, params: searchParams })
+      .then(this.onRequestResultsObjectResponse.bind(this));
   }
 
   loadObjects() {

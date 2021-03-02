@@ -118,9 +118,9 @@ class ObjectPage extends React.Component {
 
   requestObjectDetails() {
     const objectId = this.props.match.params.objectId;
-    const requestUrl = new URL(`/object/${objectId}`, Config.api.base);
-
-    axios.get(requestUrl).then(this.onRequestObjectDetailsResponse.bind(this));
+    
+    axios.get(`/object/${objectId}`, { baseURL: Config.api.base })
+      .then(this.onRequestObjectDetailsResponse.bind(this));
   }
 
   onRequestObjectDetailsResponse(resp) {

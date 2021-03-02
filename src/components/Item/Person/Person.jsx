@@ -54,9 +54,9 @@ class Person extends React.Component {
 
   requestPersonDetails() {
     const personId = this.props.match.params.personId;
-    const requestUrl = new URL(`/person/${personId}`, Config.api.base);
 
-    axios.get(requestUrl).then(this.onRequestPersonDetailsResponse.bind(this));
+    axios.get(`/person/${personId}`, { baseURL: Config.api.base })
+      .then(this.onRequestPersonDetailsResponse.bind(this));
   }
 
   onRequestPersonDetailsResponse(resp) {
