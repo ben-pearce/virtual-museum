@@ -15,6 +15,7 @@
     "@testing-library/user-event": "^12.6.3",
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
+    "formik": "^2.2.6",
     "google-fonts-plugin": "^5.0.2",
     "jsonapi-serializer": "^3.6.7",
     "react": "^17.0.1",
@@ -25,7 +26,8 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.2",
     "sass": "^1.32.6",
-    "web-vitals": "^1.1.0"
+    "web-vitals": "^1.1.0",
+    "yup": "^0.32.9"
   },
   "scripts": {
     "start": "craco start",
