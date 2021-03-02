@@ -11,7 +11,7 @@ class ImagePreloader {
   load(imageUrls) {
     return new Promise((resolve) => {
       for(const imageUrl of imageUrls) {
-        var image = new Image();
+        const image = new Image();
         this._imageCache.push(image);
 
         image.addEventListener('load', () => {

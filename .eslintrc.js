@@ -40,6 +40,7 @@ module.exports = {
       'destructuring': 'any',
       'ignoreReadBeforeAssign': false
     }],
+    'no-var': ['error'],
     'jsx-quotes': ['error', 'prefer-single']
   }
 };
