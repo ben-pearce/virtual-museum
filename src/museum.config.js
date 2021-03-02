@@ -1,6 +1,6 @@
 module.exports = {
   api: {
-    base: 'http://localhost:8000/'
+    base: 'http://localhost:3000/api/'
   },
   site: {
     name: 'Virtual Museum',

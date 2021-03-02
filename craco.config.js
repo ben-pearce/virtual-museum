@@ -6,11 +6,17 @@ module.exports = {
     enable: true,
   },
   webpack: {
-    devServer: {
-      historyApiFallback: true
-    },
     plugins: {
       add: [new GoogleFontsPlugin(path.resolve(__dirname,'./fonts.config.json'))]
     }
-  }
+  },
+  devServer: {
+    historyApiFallback: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        pathRewrite: { '^/api': '' },
+      },
+    }
+  },
 };
