@@ -69,7 +69,7 @@ const ShareToolbar = (props) => {
         size='sm' 
         variant='outline-dark' 
         className='mr-1'
-        href={new URL(`/object/${props.object.id}`, Config.api.base).toString()}
+        href={new URL(`object/${props.object.id}`, Config.api.base).toString()}
         target='_blank'
       ><FontAwesomeIcon icon={faCode} /> JSON</Button>
       <Button 
