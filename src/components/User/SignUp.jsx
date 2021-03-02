@@ -1,0 +1,154 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import Spinner from 'react-bootstrap/Spinner';
+
+import axios from 'axios';
+
+import * as Yup from 'yup';
+
+import Config from '../../museum.config';
+
+import { Deserializer } from 'jsonapi-serializer';
+
+import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
+
+class SignUp extends React.Component {
+
+  static propTypes = {
+    onSuccess: PropTypes.func.isRequired
+  }
+
+  static validationSchema = Yup.object().shape({
+    firstName: Yup.string()
+      .min(3, 'Your name must be greater than 2 characters.')
+      .max(50, 'Your name must be less than 50 characters.')
+      .required('You must enter your first name.'),
+    lastName: Yup.string()
+      .min(3, 'Your name must be greater than 2 characters.')
+      .max(50, 'Your name must be less than 50 characters.')
+      .required('You must enter your last name.'),
+    email: Yup.string()
+      .email('Email address is invalid.')
+      .required('You must enter an email address.'),
+    password: Yup.string()
+      .min(8, 'Your password must be greater than 8 characters in length.')
+      .matches(/.*\d.*/, 'Your password must contain at least one number.')
+      .matches(/.*[A-Z].*/, 'Your password must contain at least 1 uppercase letter.')
+      .matches(/.*[a-z].*/, 'Your password must contain at least 1 lowercase letter.')
+      .required('You must enter a password.'),
+  });
+
+  constructor(props) {
+    super(props);
+
+    this.handleSignUpFormSubmit = this.handleSignUpFormSubmit.bind(this);
+  }
+
+  handleSignUpFormSubmit(values, { setSubmitting }) {
+    setSubmitting(true);
+
+    const formData = new URLSearchParams(values);
+
+    axios.post('/signup', formData, { baseURL: Config.api.base }).then((r) => {
+      new Deserializer({keyForAttribute: 'camelCase'}).deserialize(r.data).then((user) => {
+        setSubmitting(false);
+        this.props.onSuccess(user);
+      });
+    });
+  }
+
+  render() {
+    return (
+      <Formik
+        initialValues={{ firstName: '', lastName: '', email: '', password: '' }}
+        validationSchema={SignUp.validationSchema}
+        onSubmit={this.handleSignUpFormSubmit}>
+        {({
+          isSubmitting,
+          touched,
+          errors,
+        }) => (
+          <FormikForm>
+            <Form.Group>
+              <Form.Label>First Name</Form.Label>
+              <Field
+                as={Form.Control}
+                type='text'
+                name='firstName'
+                placeholder='First Name'
+                isInvalid={touched.firstName && errors.firstName}
+                isValid={touched.firstName && !errors.firstName}/>
+              <ErrorMessage 
+                name='firstName'
+                type='invalid'
+                component={Form.Control.Feedback}/>
+            </Form.Group>
+
+            <Form.Group>
+              <Form.Label>Last Name</Form.Label>
+              <Field
+                as={Form.Control}
+                type='text'
+                name='lastName'
+                placeholder='Last Name'
+                isInvalid={touched.lastName && errors.lastName}
+                isValid={touched.lastName && !errors.lastName}/>
+              <ErrorMessage 
+                name='lastName'
+                type='invalid'
+                component={Form.Control.Feedback}/>
+            </Form.Group>
+
+            <Form.Group>
+              <Form.Label>Email address</Form.Label>
+              <Field
+                as={Form.Control}
+                type='email'
+                name='email'
+                placeholder='Email'
+                isInvalid={touched.email && errors.email}
+                isValid={touched.email && !errors.email}/>
+              <ErrorMessage 
+                name='email'
+                type='invalid'
+                component={Form.Control.Feedback}/>
+            </Form.Group>
+
+            <Form.Group>
+              <Form.Label>Password</Form.Label>
+              <Field 
+                as={Form.Control}
+                name='password' 
+                type='password' 
+                placeholder='Password'
+                isInvalid={touched.password && errors.password}
+                isValid={touched.password && !errors.password}/>
+              <ErrorMessage 
+                name='password' 
+                type='invalid'
+                component={Form.Control.Feedback}/>
+            </Form.Group>
+
+            <Button 
+              variant='primary' 
+              type='submit' 
+              className='float-right d-flex align-items-center' 
+              disabled={isSubmitting}>
+              Submit {isSubmitting && 
+              <Spinner 
+                className='ml-2' 
+                animation='border' 
+                size='sm' 
+                variant='light' />}
+            </Button>
+          </FormikForm>
+        )}
+      </Formik>
+    );
+  }
+}
+
+export default SignUp;
