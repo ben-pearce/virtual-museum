@@ -18,7 +18,7 @@ import Config from '../../museum.config';
 class Login extends React.Component {
 
   static propTypes = {
-    onSuccess: PropTypes.func.isRequired
+    success: PropTypes.func.isRequired
   }
 
   static validationSchema = Yup.object().shape({
@@ -42,7 +42,7 @@ class Login extends React.Component {
     axios.post('/login', formData, { baseURL: Config.api.base }).then((r) => {
       new Deserializer({keyForAttribute: 'camelCase'}).deserialize(r.data).then((user) => {
         setSubmitting(false);
-        this.props.onSuccess(user);
+        this.props.success(user);
       });
     });
   }

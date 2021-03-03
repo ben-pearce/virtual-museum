@@ -9,7 +9,7 @@ import SignUp from './SignUp';
 
 class LoginModal extends React.Component {
   static propTypes = {
-    onSuccess: PropTypes.func.isRequired
+    success: PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -41,8 +41,8 @@ class LoginModal extends React.Component {
         </Modal.Header>
         <Modal.Body>
           {this.state.view === 'login' ? 
-            <Login onSuccess={this.props.onSuccess} /> : 
-            <SignUp onSuccess={this.props.onSuccess} />}
+            <Login success={success} /> : 
+            <SignUp success={success} />}
         </Modal.Body>
         <Modal.Footer>
           {this.state.view === 'login' ? 

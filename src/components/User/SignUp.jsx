@@ -18,7 +18,7 @@ import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
 class SignUp extends React.Component {
 
   static propTypes = {
-    onSuccess: PropTypes.func.isRequired
+    success: PropTypes.func.isRequired
   }
 
   static validationSchema = Yup.object().shape({
@@ -55,7 +55,7 @@ class SignUp extends React.Component {
     axios.post('/signup', formData, { baseURL: Config.api.base }).then((r) => {
       new Deserializer({keyForAttribute: 'camelCase'}).deserialize(r.data).then((user) => {
         setSubmitting(false);
-        this.props.onSuccess(user);
+        this.props.success(user);
       });
     });
   }
