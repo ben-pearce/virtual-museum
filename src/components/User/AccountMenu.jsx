@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 
 import LoginModal from './LoginModal';
 
-import UserContext from '../../userContext';
+import { UserContext } from './AuthProvider';
 
 import {
   Link
@@ -31,38 +31,40 @@ class AccountMenu extends React.Component {
 
   handleCloseLoginModal() {
     this.setState({
-      loginModalShow: false,
-      view: 'login'
+      loginModalShow: false
     });
   }
 
   render() {
     return (
       <UserContext.Consumer>
-        {({ authenticated, setAuthenticated }) => !authenticated ? 
+        {({ authenticated, user, setUser, logoutUser }) => 
           <>
             <LoginModal 
               show={this.state.loginModalShow} 
               onHide={this.handleCloseLoginModal} 
-              onSuccess={() => setAuthenticated(true)}/>
-            <div className='account-menu'>
-              <Button variant='outline-light' onClick={this.handleShowLoginModal}>
-                  Login
-              </Button>
-            </div>
-          </>
-          :
-          <Dropdown className='account-menu'>
-            <Dropdown.Toggle variant='outline-light'>
-                Hello, {this.state.profileFirstName}
-            </Dropdown.Toggle>
-            <Dropdown.Menu align='right'>
-              <Dropdown.Item as={Link} to='/profile'>Profile</Dropdown.Item>
-              <Dropdown.Item as={Link} to='/profile/favourites'>Favourites</Dropdown.Item>
-              <Dropdown.Divider />
-              <Dropdown.Item className='text-danger'>Logout</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown> }
+              success={(user) => {
+                this.handleCloseLoginModal();
+                setUser(user);
+              }}/>
+            {!authenticated ? 
+              <div className='account-menu'>
+                <Button variant='outline-light' onClick={this.handleShowLoginModal}>
+                    Login
+                </Button>
+              </div> :
+              <Dropdown className='account-menu'>
+                <Dropdown.Toggle variant='outline-light'>
+                    Hello, {user.firstName}
+                </Dropdown.Toggle>
+                <Dropdown.Menu align='right'>
+                  <Dropdown.Item as={Link} to='/profile'>Profile</Dropdown.Item>
+                  <Dropdown.Item as={Link} to='/profile/favourites'>Favourites</Dropdown.Item>
+                  <Dropdown.Divider />
+                  <Dropdown.Item className='text-danger' onClick={logoutUser}>Logout</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>}
+          </>}
       </UserContext.Consumer>
     );
   }
