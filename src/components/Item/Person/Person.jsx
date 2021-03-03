@@ -30,6 +30,8 @@ import { withRouter } from 'react-router-dom';
 
 import ImagePreloader from '../../../imagePreloader';
 
+import ShareToolbar from '../ShareToolbar';
+
 const PersonDeserializer = new Deserializer({keyForAttribute: 'camelCase'});
 
 class Person extends React.Component {
@@ -117,6 +119,9 @@ class Person extends React.Component {
 
           </Col>
           <Col md={8} lg={9}>
+            <div className='d-flex justify-content-end'>
+              <ShareToolbar person={this.state.person} />
+            </div>
             <h2 className='mb-3'><FontAwesomeIcon icon={faUser}/> {this.state.person.name}</h2>
             <p>
               {this.state.person.description && 
