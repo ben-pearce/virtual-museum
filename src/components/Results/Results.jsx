@@ -108,7 +108,9 @@ class Results extends React.Component {
     } else {
       new Deserializer({keyForAttribute: 'camelCase'}).deserialize(resp.data)
         .then((objects) => {
-          const imageUrls = objects.map((object) => new URL(`image/${object.id}/thumb`, Config.api.base));
+          const imageUrls = objects
+            .filter((o) => o.collectionsObjectImages.length > 0)
+            .map((object) => new URL(`image/${object.id}/thumb`, Config.api.base));
           this.objectCache = objects;
           new ImagePreloader().load(imageUrls).then((images) => {
             this.images = images;
