@@ -20,7 +20,6 @@ class LoginModal extends React.Component {
     };
 
     this.handleToggleView = this.handleToggleView.bind(this);
-    this.handleModalHide = this.handleModalHide.bind(this);
   }
 
   handleToggleView() {
@@ -29,13 +28,11 @@ class LoginModal extends React.Component {
     });
   }
 
-  handleModalHide() {
-    this.setState({ view: 'login'});
-  }
-
   render() {
+    const {success, ...props} = this.props;
+
     return (
-      <Modal {...this.props}>
+      <Modal {...props}>
         <Modal.Header closeButton>
           {this.state.view === 'login' ? 'Sign In' : 'Create Account'}
         </Modal.Header>
