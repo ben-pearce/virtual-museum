@@ -3,85 +3,39 @@ import PropTypes from 'prop-types';
 
 import Button from 'react-bootstrap/Button';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
-import Popover from 'react-bootstrap/Popover';
-import Tooltip from 'react-bootstrap/Tooltip';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import InputGroup from 'react-bootstrap/InputGroup';
-import FormControl from 'react-bootstrap/FormControl';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faShareAlt,
-  faCode,
-  faClipboard
-  //faStar as fullStar
+  faCode
 } from '@fortawesome/free-solid-svg-icons';
-import { faStar as emptyStar } from '@fortawesome/free-regular-svg-icons';
+
+import FavouriteButton from './FavouriteButton';
+import ShareButton from './ShareButton';
 
 import Config from '../../museum.config';
 
 
 const ShareToolbar = (props) => {
-
-  const sharePopover = (
-    <Popover>
-      <Popover.Title as='h3'>Share</Popover.Title>
-      <Popover.Content>
-        <InputGroup>
-          <FormControl
-            readOnly
-            id='sharePageUrl'
-            aria-label='Page URL'
-            value={window.location.href}
-          />
-          <InputGroup.Append>
-            <OverlayTrigger
-              trigger={['hover', 'click']}
-              placement='bottom'
-              overlay={<Tooltip>Copy to clipboard</Tooltip>}
-            >
-              <Button 
-                variant='outline-secondary'
-                onClick={() => {
-                  const shareUrlInput = document.getElementById('sharePageUrl');
-                  shareUrlInput.select();
-                  document.execCommand('copy');
-
-                }}
-              > <FontAwesomeIcon icon={faClipboard}/></Button>
-            </OverlayTrigger>
-          </InputGroup.Append>
-        </InputGroup>
-      </Popover.Content>
-    </Popover>
-  );
-
+  const type = props.object ? 'object' : 'person';
+  const id = props.object ? props.object.id : props.person.id;
   return (
     <ButtonToolbar className='mb-2'>
-      <OverlayTrigger trigger='click' placement='bottom' overlay={sharePopover}>
-        <Button 
-          size='sm' 
-          variant='outline-dark' 
-          className='mr-1'
-        ><FontAwesomeIcon icon={faShareAlt} /> Share</Button>
-      </OverlayTrigger>
+      <ShareButton />
       <Button 
         size='sm' 
         variant='outline-dark' 
         className='mr-1'
-        href={new URL(`object/${props.object.id}`, Config.api.base).toString()}
+        href={new URL(`${type}/${id}`, Config.api.base).toString()}
         target='_blank'
       ><FontAwesomeIcon icon={faCode} /> JSON</Button>
-      <Button 
-        size='sm' 
-        variant='outline-dark' 
-      ><FontAwesomeIcon icon={emptyStar} /> Favourite</Button>
+      <FavouriteButton type={type} id={id} />
     </ButtonToolbar>
   );
 };
 
 ShareToolbar.propTypes = {
-  object: PropTypes.object
+  object: PropTypes.object,
+  person: PropTypes.object
 };
 
 
