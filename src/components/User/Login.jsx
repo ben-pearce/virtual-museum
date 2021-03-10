@@ -33,18 +33,28 @@ class Login extends React.Component {
     super(props);
 
     this.handleLoginFormSubmit = this.handleLoginFormSubmit.bind(this);
+    this.handleOnLoginSuccess = this.handleOnLoginSuccess.bind(this);
+    this.handleOnLoginError = this.handleOnLoginError.bind(this);
   }
 
-  handleLoginFormSubmit(values, { setSubmitting }) {
-    setSubmitting(true);
+  handleLoginFormSubmit(values, actions) {
+    actions.setSubmitting(true);
     const formData = new URLSearchParams(values);
 
-    axios.post('/login', formData, { baseURL: Config.api.base }).then((r) => {
-      new Deserializer({keyForAttribute: 'camelCase'}).deserialize(r.data).then((user) => {
-        setSubmitting(false);
-        this.props.success(user);
-      });
+    axios.post('/login', formData, { baseURL: Config.api.base })
+      .then(r => this.handleOnLoginSuccess(r, actions))
+      .catch(r => this.handleOnLoginError(r, actions));
+  }
+
+  handleOnLoginSuccess(resp, { setSubmitting }) {
+    new Deserializer({keyForAttribute: 'camelCase'}).deserialize(resp.data).then((user) => {
+      setSubmitting(false);
+      this.props.success(user);
     });
+  }
+
+  handleOnLoginError(resp, { setSubmitting }) {
+    setSubmitting(false);
   }
 
   render() {
