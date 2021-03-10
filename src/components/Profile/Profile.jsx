@@ -74,14 +74,14 @@ class Profile extends React.Component {
                     <ListGroup.Item 
                       action 
                       as={NavLink} 
-                      to={`${this.props.match.url}/favourites/objects`} 
+                      to={`${this.props.match.url}/favourites/object`} 
                       activeClassName='active'>
                         Objects
                     </ListGroup.Item>
                     <ListGroup.Item 
                       action 
                       as={NavLink} 
-                      to={`${this.props.match.url}/favourites/people`} 
+                      to={`${this.props.match.url}/favourites/person`} 
                       activeClassName='active'>
                         People
                     </ListGroup.Item>
@@ -94,7 +94,7 @@ class Profile extends React.Component {
                     <Redirect to={`${this.props.match.url}/overview`} />
                   </Route>
                   <Route exact path={`${this.props.match.url}/favourites`}>
-                    <Redirect to={`${this.props.match.url}/favourites/objects`} />
+                    <Redirect to={`${this.props.match.url}/favourites/object`} />
                   </Route>
                   <Route path={`${this.props.match.url}/overview`}>
                     <Home />
