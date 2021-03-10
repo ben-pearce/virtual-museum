@@ -99,9 +99,10 @@ class Profile extends React.Component {
                   <Route path={`${this.props.match.url}/overview`}>
                     <Home />
                   </Route>
-                  <Route path={`${this.props.match.url}/favourites/:type`}>
-                    <Favourites />
-                  </Route>
+                  <Route 
+                    path={`${this.props.match.url}/favourites/:type`}
+                    render={props => <Favourites key={props.location.key} {...props} />}
+                  />
                 </Switch>
               </Col>
             </Row>
