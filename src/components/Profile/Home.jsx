@@ -20,7 +20,7 @@ class Home extends React.Component {
         {({ user }) => 
           <>
             <Helmet>
-              <title>{`Profile - ${Config.site.name}`}</title>
+              <title>{`Profile (${user.firstName}) - ${Config.site.name}`}</title>
             </Helmet>
             <Alert variant='success'>
               <Alert.Heading>Hey {user.firstName}, welcome to your <strong>profile</strong>!</Alert.Heading>
