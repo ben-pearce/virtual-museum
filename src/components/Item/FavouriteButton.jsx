@@ -16,6 +16,8 @@ import axios from 'axios';
 
 import Config from '../../museum.config';
 
+import { Deserializer } from 'jsonapi-serializer';
+
 class FavouriteButton extends React.Component {
   static propTypes = {
     type: PropType.string.isRequired,
@@ -59,13 +61,11 @@ class FavouriteButton extends React.Component {
       params: { 
         [`${this.props.type}Id`]: this.props.id 
       } 
-    }).then((r) => {
-      if(r.status === 200) {
-        this.setState({ favourited: true });
-      }
-    }).catch(() => {
-      this.setState({ favourited: false });
-    });
+    })
+      .then(r => new Deserializer({keyForAttribute: 'camelCase'}).deserialize(r.data))
+      .then(d => {
+        this.setState({ favourited: d.length > 0 });
+      });
   }
 
   handleToggleFavourite() {
