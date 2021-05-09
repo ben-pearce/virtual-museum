@@ -13,6 +13,13 @@ import {
   faClipboard
 } from '@fortawesome/free-solid-svg-icons';
 
+/**
+ * A share button for copying object or person page URL to the clipboard.
+ *
+ * Clicking displays a pop-over with textbox containing URL.
+ *
+ * @returns {ReactNode} The {@link OverlayTrigger} react node.
+ */
 const ShareButton = () => {
   const [url, setUrl] = useState(window.location.href);
 

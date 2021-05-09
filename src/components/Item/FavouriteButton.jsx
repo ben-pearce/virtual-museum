@@ -18,7 +18,16 @@ import Config from '../../museum.config';
 
 import { Deserializer } from 'jsonapi-serializer';
 
+/**
+ * React component for favourite button displayed on object and person pages.
+ */
 class FavouriteButton extends React.Component {
+  /**
+   * FavouriteButton prop types.
+   * 
+   * @static
+   * @member {object}
+   */
   static propTypes = {
     type: PropType.string.isRequired,
     id: PropType.string.isRequired
@@ -26,15 +35,29 @@ class FavouriteButton extends React.Component {
 
   static contextType = UserContext
 
+  /**
+   * Creates a favourite button component instance.
+   * 
+   * @param {object} props Component properties.
+   * @param {string} props.type Type of item `person` or `object`.
+   * @param {string} props.id ID of item.
+   */
   constructor(props) {
     super(props);
 
     this.state = {
+      /** Is the item favourited, null if loading */
       favourited: null,
+      /** Is transaction in progress */
       processing: false,
+      /** Login modal visiblity state */
       loginModalShow: false
     };
 
+    /**
+     * Set true or false once {@link UserContext} becomes available.
+     * @member {boolean|null}
+     */
     this.authenticated = null;
 
     this.handleLoginModalShow = this.handleLoginModalShow.bind(this);
@@ -43,6 +66,10 @@ class FavouriteButton extends React.Component {
     this.handleGetFavourited = this.handleGetFavourited.bind(this);
   }
 
+  /**
+   * Check if the {@link UserContext} has become available, if it has then
+   * request favourite status from the API.
+   */
   componentDidUpdate() {
     if(this.context.authenticated !== this.authenticated) {
       this.handleGetFavourited();
@@ -50,11 +77,19 @@ class FavouriteButton extends React.Component {
     }
   }
 
+  /**
+   * Requests favourite status as soon as component is mounted in the
+   * application.
+   */
   componentDidMount() {
     this.authenticated = this.context.authenticated;
     this.handleGetFavourited();
   }
 
+  /**
+   * Initiates axios request to the API for favourite status of the relevant
+   * item. Then proceeds to update the state of the component.
+   */
   handleGetFavourited() {
     axios.get(`/favourite/${this.props.type}`, { 
       baseURL: Config.api.base, 
@@ -68,6 +103,11 @@ class FavouriteButton extends React.Component {
       });
   }
 
+  /**
+   * Event handle for toggling the favourite status. Initiates axios requests
+   * either will be POST to favourite or DELETE to unfavourite, then proceeds to
+   * update the state of the component.
+   */
   handleToggleFavourite() {
     this.setState({ processing: true });
     if(!this.state.favourited) {
@@ -93,14 +133,25 @@ class FavouriteButton extends React.Component {
     }
   }
 
+  /**
+   * Sets the visibility state of the login modal to visible.
+   */
   handleLoginModalShow() {
     this.setState({ loginModalShow: true });
   }
 
+  /**
+   * Sets the visibility state of the login modal to hidden.
+   */
   handleLoginModalHide() {
     this.setState({ loginModalShow: false });
   }
 
+  /**
+   * Renders favourite button.
+   * 
+   * @returns {ReactNode} The react node to render.
+   */
   render() {
     return (
       <UserContext.Consumer>

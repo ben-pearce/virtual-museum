@@ -12,20 +12,42 @@ import { withRouter } from 'react-router-dom';
 
 import ImagePreloader from '../../imagePreloader';
 
+/**
+ * React component for object row displayed on object and person pages for
+ * related objects.
+ */
 class ObjectRow extends React.Component {
+  /**
+   * ObjectRow prop types.
+   * 
+   * @static
+   * @member {object}
+   */
   static propTypes = {
     objects: PropTypes.array.isRequired
   };
 
+  /**
+   * Creates an object row component instance.
+   * 
+   * @param {object} props Component properties.
+   * @param {object[]} props.objects Array of object data.
+   */
   constructor(props) {
     super(props);
 
     this.state = {
+      /** Object data to be displayed */
       objects: null,
+      /** Preloaded images for objects */
       images: null
     };
   }
 
+  /**
+   * Preloads the images for each object and then proceeds to update the
+   * component state.
+   */
   componentDidMount() {
     const imageUrls = this.props.objects.map((object) => 
       new URL(`image/${object.id}/thumb`, Config.api.base));
@@ -39,6 +61,11 @@ class ObjectRow extends React.Component {
       });
   }
 
+  /**
+   * Renders the object row.
+   * 
+   * @returns {ReactNode} The react node to render.
+   */
   render() {
     return (
       <Row xs={1} md={4}>

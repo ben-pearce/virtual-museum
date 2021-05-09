@@ -14,7 +14,16 @@ import ShareButton from './ShareButton';
 
 import Config from '../../museum.config';
 
-
+/**
+ * Share toolbar component displayed on person and object pages. 
+ *
+ * Integrates the share button and favourite button into a single toolbar. 
+ * 
+ * @param {object} props Component properties.
+ * @param {object} props.object Museum object data.
+ * @param {object} props.person Museum person data.
+ * @returns {ReactNode} The {@link ButtonToolbar} react node.
+ */
 const ShareToolbar = (props) => {
   const type = props.object ? 'object' : 'person';
   const id = props.object ? props.object.id : props.person.id;
