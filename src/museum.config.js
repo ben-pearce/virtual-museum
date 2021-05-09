@@ -1,3 +1,6 @@
+/**
+ * Application config file.
+ */
 module.exports = {
   api: {
     base: 'http://localhost:3000/api/'
