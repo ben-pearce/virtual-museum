@@ -1,6 +1,12 @@
 import React from 'react';
 import ContentLoader from 'react-content-loader';
 
+/**
+ * A content loader skeleton definition for when grid objects are being loaded.
+ * Displayed to the user while content is loading in the background.
+ * 
+ * @returns {ReactNode} The {@link ContentLoader} react node.
+ */
 const GridContentLoader = () => (
   <ContentLoader 
     speed={2}
