@@ -34,7 +34,10 @@ import ShareToolbar from '../ShareToolbar';
 
 const PersonDeserializer = new Deserializer({keyForAttribute: 'camelCase'});
 
-class Person extends React.Component {
+/**
+ * React component for displaying person page content to the user.
+ */
+class PersonPage extends React.Component {
   static propTypes = {
     match: PropTypes.object.isRequired
   };
@@ -43,17 +46,28 @@ class Person extends React.Component {
     super(props);
 
     this.state = {
+      /** Person museum object data */
       person: null,
 
+      /** Related object data */
       relatedObjects: null,
+      /** Related images preloaded */
       relatedImages: null
     };
   }
 
+  /**
+   * Requests object details from API once the component has been mounted into
+   * the application.
+   */
   componentDidMount() {
     this.requestPersonDetails();
   }
 
+  /**
+   * Retrieves the person ID from the router match object (comes from URL bar)
+   * and initiates a request to the API for person data using axios.
+   */
   requestPersonDetails() {
     const personId = this.props.match.params.personId;
 
@@ -61,6 +75,15 @@ class Person extends React.Component {
       .then(this.onRequestPersonDetailsResponse.bind(this));
   }
 
+  /**
+   * Handles raw response from the API. 
+   * 
+   * 1. Deserializes the JSON string.
+   * 2. Starts pre-loading the images into browser.
+   * 3. Updates the state of the component.
+   * 
+   * @param {string} resp Raw response from API.
+   */
   onRequestPersonDetailsResponse(resp) {
     PersonDeserializer.deserialize(resp.data).then((person) => {
       PersonDeserializer.deserialize(resp.data.meta.relatedObjects).then((objects) => {
@@ -80,6 +103,11 @@ class Person extends React.Component {
     });
   }
 
+  /**
+   * Renders person page.
+   * 
+   * @returns {ReactNode} The react node to render.
+   */
   render() {
     if(this.state.person === null) {
       return (
@@ -151,4 +179,4 @@ class Person extends React.Component {
   }
 }
 
-export default withRouter(Person);
+export default withRouter(PersonPage);

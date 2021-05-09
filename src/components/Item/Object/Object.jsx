@@ -44,11 +44,22 @@ import ImagePreloader from '../../../imagePreloader';
 
 const ObjectDeserializer = new Deserializer({keyForAttribute: 'camelCase'});
 
+/**
+ * React component for displaying object page content to the user. 
+ * 
+ * Includes a carousel and links to relevant pages.
+ */
 class ObjectPage extends React.Component {
   static propTypes = {
     match: PropTypes.object.isRequired
   };
 
+  /**
+   * Options for the primary Splide carousel.
+   *
+   * @member
+   * @static
+   */
   static primaryOptions = {
     type: 'loop',
     fixedHeight: 300,
@@ -62,6 +73,12 @@ class ObjectPage extends React.Component {
     }
   };
 
+  /**
+   * Options for the secondary Splide carousel.
+   * 
+   * @member
+   * @static
+   */
   static secondaryOptions = {
     type: 'slide',
     rewind: true,
@@ -77,16 +94,26 @@ class ObjectPage extends React.Component {
   };
 
 
+  /**
+   * Create an object page component.
+   * 
+   * @param {Object} props The props object for this component instance.
+   */
   constructor(props) {
     super(props);
 
     this.state = {
+      /** The museum object data */
       object: null,
+      /** The object images preloaded */
       images: null,
 
+      /** Related museum object data */
       relatedObjects: null,
 
+      /** Image modal visibility state */
       imageModal: false,
+      /** Image modal image src */
       imageModalSrc: null
     };
 
@@ -97,10 +124,24 @@ class ObjectPage extends React.Component {
     this.handleOpenImageModal = this.handleOpenImageModal.bind(this);
   }
 
+  /**
+   * Requests object details from API once the component has been mounted into
+   * the application.
+   */
   componentDidMount() {
     this.requestObjectDetails();
   }
 
+  /**
+   * Clears the object state when user switches to view a different museum
+   * object.
+   *
+   * If the object ID has change then the state is reset and new object details
+   * are requested using {@link ObjectPage#requestObjectDetails}.
+   *
+   * @param {Object} prevProps Props of component in previous state.
+   * @param {Object} prevState State of component in previous state.
+   */
   componentDidUpdate(prevProps, prevState) {
     if(prevProps.match.params.objectId !== this.props.match.params.objectId) {
       this.setState({ 
@@ -116,6 +157,10 @@ class ObjectPage extends React.Component {
     }
   }
 
+  /**
+   * Retrieves the object ID from the router match object (comes from URL bar)
+   * and initiates a request to the API for object data using axios.
+   */
   requestObjectDetails() {
     const objectId = this.props.match.params.objectId;
     
@@ -123,6 +168,15 @@ class ObjectPage extends React.Component {
       .then(this.onRequestObjectDetailsResponse.bind(this));
   }
 
+  /**
+   * Handles raw response from the API. 
+   * 
+   * 1. Deserializes the JSON string.
+   * 2. Starts pre-loading the images into browser.
+   * 3. Updates the state of the component.
+   * 
+   * @param {string} resp Raw response from API.
+   */
   onRequestObjectDetailsResponse(resp) {
     ObjectDeserializer.deserialize(resp.data).then((object) => {
       const imageUrls = object.collectionsObjectImages.map((image, index) => 
@@ -140,12 +194,20 @@ class ObjectPage extends React.Component {
     });
   }
 
+  /**
+   * Handle close image modal state.
+   */
   handleCloseImageModal() {
     this.setState({
       imageModal: false
     });
   }
 
+  /**
+   * Handle open image modal state.
+   * 
+   * @param {event} e Event arguments.
+   */
   handleOpenImageModal(e) {
     this.setState({
       imageModal: true,
@@ -153,6 +215,11 @@ class ObjectPage extends React.Component {
     });
   }
 
+  /**
+   * Renders object page.
+   * 
+   * @returns {ReactNode} The react node to render.
+   */
   render() {
     if(this.state.object === null) {
       return (
