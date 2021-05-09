@@ -20,6 +20,14 @@ import Profile from './components/Profile/Profile';
 import AccountMenu from './components/User/AccountMenu';
 import { AuthProvider } from './components/User/AuthProvider';
 
+/**
+ * Mounts the React router instance into the main application. 
+ *
+ * Wraps the router in an {@link AuthProvider} parent node so that children are
+ * able to access the auth methods.
+ *
+ * @returns {ReactNode} The application react node.
+ */
 const App = () => {
   return (
     <AuthProvider>
