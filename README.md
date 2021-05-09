@@ -36,14 +36,33 @@ $ git clone https://github.com/ketnipz/virtual-museum && cd virtual-museum
 $ npm i
 ```
 
-3. Build the application
+3. Edit application configuration
+```shell
+vi src/museum.config.js
+```
+
+4. Build the application
 ```shell
 $ npm run build
 ```
 
-4. Copy build output to web root
+5. Copy build output to web root
 ```shell
 cp virtual-museum /var/www/html
+```
+
+## Build Documentation
+
+JSDoc is used throughout and HTML documentation can be built in just a couple of easy steps.
+
+1. Ensure JSDoc is installed
+```shell
+npm i -g jsdoc
+```
+
+2. Build documentation
+```shell
+cd virtual-museum && jsdoc -r -d ./docs ./src
 ```
 
 ## Statement of Originality
