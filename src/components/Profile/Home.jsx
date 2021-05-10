@@ -9,11 +9,23 @@ import { UserContext } from '../User/AuthProvider';
 
 import Config from '../../museum.config';
 
+/**
+ * Component for profile homepage.
+ */
 class Home extends React.Component {
+
+  /**
+   * Creates a new profile homepage component instance.
+   */
   constructor(props) {
     super(props);
   }
 
+  /**
+   * Renders profile homepage.
+   * 
+   * @returns {ReactNode} The react node to render.
+   */
   render() {
     return (
       <UserContext.Consumer>

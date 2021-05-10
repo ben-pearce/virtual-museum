@@ -28,13 +28,23 @@ import {
   faStar
 } from '@fortawesome/free-solid-svg-icons';
 
+/**
+ * Component for profile. Includes navigation and wrapper for profile pages.
+ */
 class Profile extends React.Component {
   static propTypes = {
     match: PropTypes.object.isRequired
   };
 
+  /**
+   * Render profile react component.
+   * 
+   * @returns {ReactNode} The react node to render.
+   */
   render () {
     return (
+      // Profile wrapped in user context consumer to provide access to
+      // authentication attributes
       <UserContext.Consumer>
         {({ authenticated, ready }) => {
           if(!ready) {
@@ -45,6 +55,7 @@ class Profile extends React.Component {
             );
           }
 
+          // Disallow access if not authenticated.
           if(!authenticated) {
             return <Redirect to='/'/>;
           }

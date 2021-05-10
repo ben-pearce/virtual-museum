@@ -28,6 +28,11 @@ import {
 
 const FavouriteDeserializer = new Deserializer({keyForAttribute: 'camelCase'});
 
+/**
+ * Component for message displayed when user has not favourites any objects yet.
+ * 
+ * @returns {ReactNode} The react node.
+ */
 const NoFavourites = () => {
   return (
     <div className='text-muted mt-3 mb-3'>
@@ -44,11 +49,22 @@ const NoFavourites = () => {
   );
 };
 
+/**
+ * React component for profile favourites page, supports both object and person
+ * favourites.
+ */
 class Favourites extends React.Component {
   static propTypes = {
     match: PropTypes.object.isRequired
   };
 
+
+  /**
+   * Creates a new favourites page component instance.
+   *
+   * @param {object} props Component properties
+   * @param {object|null} props.favourites The favourites to display to the user.
+   */
   constructor(props) {
     super(props);
 
@@ -60,10 +76,19 @@ class Favourites extends React.Component {
     this.handleOnGetFavouritesResponse = this.handleOnGetFavouritesResponse.bind(this);
   }
 
+  /**
+   * Initiates request to API to retrieve favourites to render.
+   */
   componentDidMount() {
     this.handleGetFavourites();
   }
 
+  /**
+   * Initiates axios request to the API in order to retrieve the favourites.
+   *
+   * The type of favourites (i.e. `person` or `object`) will be determined by
+   * the URL path.
+   */
   handleGetFavourites() {
     const type = this.props.match.params.type;
 
@@ -72,12 +97,23 @@ class Favourites extends React.Component {
       .then(this.handleOnGetFavouritesResponse);
   }
 
+  /**
+   * Handles favourites response from the API and updates the state of the
+   * component.
+   * 
+   * @param {string} resp Raw response from the API.
+   */
   handleOnGetFavouritesResponse(resp) {
     FavouriteDeserializer.deserialize(resp.data).then((favourites) => {
       this.setState({ favourites: favourites });
     });
   }
 
+  /**
+   * Renders favourites list.
+   * 
+   * @returns {ReactNode} The react node to render.
+   */
   render() {
     if(this.state.favourites === null) {
       return (<div className='d-flex justify-content-center'>
