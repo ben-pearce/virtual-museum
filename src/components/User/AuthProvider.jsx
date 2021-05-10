@@ -7,6 +7,10 @@ import { Deserializer } from 'jsonapi-serializer';
 
 import Config from '../../museum.config';
 
+/**
+ * React context that provides access to user authentication API from react
+ * components far down in the react component tree.
+ */
 const UserContext = React.createContext({ 
   authenticated: false,
   user: null,
@@ -17,13 +21,21 @@ const UserContext = React.createContext({
   ready: false
 });
 
-
+/**
+ * Children of this class are provided access to authentication methods and
+ * attributes such as user data and a logout method.
+ */
 class AuthProvider extends React.Component {
 
   static propTypes = {
     children: PropTypes.node.isRequired
   }
 
+  /**
+   * Create auth provider component instance.
+   * 
+   * @param {object} props Component properties.
+   */
   constructor(props) {
     super(props);
 
@@ -37,6 +49,13 @@ class AuthProvider extends React.Component {
     this.logoutUser = this.logoutUser.bind(this);
   }
 
+  /**
+   * Make request to API profile endpoint to check if user is authenticated on
+   * component mount.
+   *
+   * If the user is authenticated then the state will be updated to notify all
+   * children that user data is now accessible.
+   */
   componentDidMount() {
     axios.get('/profile', { baseURL: Config.api.base }).then((r) => {
       if(r.status === 200) {
@@ -47,6 +66,11 @@ class AuthProvider extends React.Component {
     }).catch(() => this.setUser(null));
   }
 
+  /**
+   * Sets the component state to indicate whether the user is authenticated.
+   *
+   * @param {object|null} user The user data.
+   */
   setUser(user) {
     this.setState({ 
       user: user, 
@@ -55,6 +79,9 @@ class AuthProvider extends React.Component {
     });
   }
 
+  /**
+   * Initiates axios request to end the user session.
+   */
   logoutUser() {
     axios.get('/logout', { baseURL: Config.api.base }).then((r) => {
       if(r.status === 200) {
@@ -63,6 +90,13 @@ class AuthProvider extends React.Component {
     });
   }
 
+  /**
+   * Render the auth provider component.
+   *
+   * Passes state and method access down into the child components.
+   *
+   * @returns {ReactNode} The react node.
+   */
   render() {
     const value = {
       ...this.state,

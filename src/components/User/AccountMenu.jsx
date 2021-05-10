@@ -11,7 +11,15 @@ import {
   Link
 } from 'react-router-dom';
 
+/**
+ * Component for account drop down menu.
+ */
 class AccountMenu extends React.Component {
+  /**
+   * Create account menu component instance.
+   * 
+   * @param {object} props Component properties.
+   */
   constructor(props) {
     super(props);
 
@@ -23,18 +31,29 @@ class AccountMenu extends React.Component {
     this.handleCloseLoginModal = this.handleCloseLoginModal.bind(this);
   }
 
+  /**
+   * Sets login modal visibility state to visible.
+   */
   handleShowLoginModal() {
     this.setState({
       loginModalShow: true
     });
   }
 
+  /**
+   * Sets login modal visible state to hidden.
+   */
   handleCloseLoginModal() {
     this.setState({
       loginModalShow: false
     });
   }
 
+  /**
+   * Renders the account menu.
+   * 
+   * @returns {ReactNode} The react node.
+   */
   render() {
     return (
       <UserContext.Consumer>

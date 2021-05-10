@@ -15,12 +15,20 @@ import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
 
 import Config from '../../museum.config';
 
+/**
+ * Component for login form.
+ */
 class Login extends React.Component {
 
   static propTypes = {
     success: PropTypes.func.isRequired
   }
 
+  /**
+   * Form validation schema for login form. 
+   *
+   * Will be passed into Formik to validate user inputs.
+   */
   static validationSchema = Yup.object().shape({
     email: Yup.string()
       .email('Email address is invalid.')
@@ -29,6 +37,13 @@ class Login extends React.Component {
       .required('You must enter a password.'),
   });
 
+  /**
+   * Create login form component instance.
+   *
+   * @param {object} props Component properties.
+   * @param {func} props.success Callback fired when login is successful and
+   * user context has been updated.
+   */
   constructor(props) {
     super(props);
 
@@ -37,6 +52,13 @@ class Login extends React.Component {
     this.handleOnLoginError = this.handleOnLoginError.bind(this);
   }
 
+  /**
+   * Sets the form to submission state and initiates axios request to API for
+   * authentication.
+   *
+   * @param {object} values Form input values.
+   * @param {object} actions Formik object provides API access.
+   */
   handleLoginFormSubmit(values, actions) {
     actions.setSubmitting(true);
     const formData = new URLSearchParams(values);
@@ -46,6 +68,13 @@ class Login extends React.Component {
       .catch(r => this.handleOnLoginError(r, actions));
   }
 
+  /**
+   * Handles login form success and invokes the {@link Login#success} callback.
+   * 
+   * @param {string} resp Raw API response.
+   * @param {func} param1.setSubmitting Function for setting form state to
+   * submitting.
+   */
   handleOnLoginSuccess(resp, { setSubmitting }) {
     new Deserializer({keyForAttribute: 'camelCase'}).deserialize(resp.data).then((user) => {
       setSubmitting(false);
@@ -53,10 +82,25 @@ class Login extends React.Component {
     });
   }
 
+  /**
+   * Handles login form failure.
+   * 
+   * @param {string} resp Raw API response.
+   * @param {func} param1.setSubmitting Function for setting form state to
+   * submitting.
+   */
   handleOnLoginError(resp, { setSubmitting }) {
     setSubmitting(false);
   }
 
+  /**
+   * Render login form. 
+   *
+   * Formik is responsible for basic input validation using the validation
+   * schema.
+   *
+   * @returns {ReactNode} The {@link Formik} component.
+   */
   render() {
     return (
       <Formik

@@ -7,6 +7,12 @@ import Button from 'react-bootstrap/Button';
 import Login from './Login';
 import SignUp from './SignUp';
 
+/**
+ * Component for login modal. 
+ *
+ * Provides a switch to either create a new account or login to existing
+ * account.
+ */
 class LoginModal extends React.Component {
   static propTypes = {
     success: PropTypes.func.isRequired
@@ -22,12 +28,20 @@ class LoginModal extends React.Component {
     this.handleToggleView = this.handleToggleView.bind(this);
   }
 
+  /**
+   * Updates the component state to toggle between login and signup forms.
+   */
   handleToggleView() {
     this.setState({
       view: this.state.view === 'login' ? 'signup' : 'login'
     });
   }
 
+  /**
+   * Renders the react component.
+   * 
+   * @returns {ReactNode} The react node.
+   */
   render() {
     const {success, ...props} = this.props;
 

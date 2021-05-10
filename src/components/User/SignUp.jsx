@@ -15,12 +15,20 @@ import { Deserializer } from 'jsonapi-serializer';
 
 import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
 
+/**
+ * Component for sign up form.
+ */
 class SignUp extends React.Component {
 
   static propTypes = {
     success: PropTypes.func.isRequired
   }
 
+  /**
+   * Form validation schema for sign up form. 
+   *
+   * Will be passed into Formik to validate user inputs.
+   */
   static validationSchema = Yup.object().shape({
     firstName: Yup.string()
       .min(3, 'Your name must be greater than 2 characters.')
@@ -41,12 +49,28 @@ class SignUp extends React.Component {
       .required('You must enter a password.'),
   });
 
+  /**
+   * Create sign up form component instance.
+   *
+   * @param {object} props Component properties.
+   * @param {func} props.success Callback fired when sign up is successful and
+   * user context has been updated.
+   */
   constructor(props) {
     super(props);
 
     this.handleSignUpFormSubmit = this.handleSignUpFormSubmit.bind(this);
   }
 
+  /**
+   * Handles sign up form submission.
+   *
+   * Updates form state and initiates axios request to API.
+   *
+   * @param {object} values Form input values.
+   * @param {func} param1.setSubmitting Function for setting form state to
+   * submitting.
+   */
   handleSignUpFormSubmit(values, { setSubmitting }) {
     setSubmitting(true);
 
@@ -60,6 +84,14 @@ class SignUp extends React.Component {
     });
   }
 
+  /**
+   * Render sign up form. 
+   *
+   * Formik is responsible for basic input validation using the validation
+   * schema.
+   *
+   * @returns {ReactNode} The {@link Formik} component.
+   */
   render() {
     return (
       <Formik
