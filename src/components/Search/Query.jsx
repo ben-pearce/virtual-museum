@@ -12,6 +12,9 @@ import { withRouter } from 'react-router-dom';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+/**
+ * Component for query menu with keyword search box.
+ */
 class QueryMenu extends React.Component {
 
   static propTypes = {
@@ -19,6 +22,12 @@ class QueryMenu extends React.Component {
     onSubmit: PropTypes.func.isRequired
   };
 
+  /**
+   * Creates new query menu component instance.
+   *
+   * @param {object} props Component properties.
+   * @param {func} props.onSubmit Callback fired when user submits search query.
+   */
   constructor(props) {
     super(props);
 
@@ -29,6 +38,10 @@ class QueryMenu extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  /**
+   * Retrieves search query from browser URL path if applicable when the
+   * component is mounted.
+   */
   componentDidMount() {
     const queryParams = new URLSearchParams(this.props.location.search);
     let searchQuery = queryParams.get('q');
@@ -40,18 +53,35 @@ class QueryMenu extends React.Component {
     this.setState({ query: searchQuery });
   }
 
+  /**
+   * Invokes the {@link QueryMenu#onSubmit} callback if the query has changed
+   * since the previous state.
+   *
+   * @param {object} prevProps Props in previous state.
+   * @param {object} prevState State in previous state.
+   */
   componentDidUpdate(prevProps, prevState) {
     if(prevState.query != this.state.query) {
       this.props.onSubmit(this.state.query);
     }
   }
 
+  /**
+   * Event handler for when query form is submitted.
+   * 
+   * @param {event} e Event arguments.
+   */
   handleSubmit(e) {
     e.preventDefault();
     const query = document.getElementById('search-query');
     this.setState({ query: query.value });
   }
 
+  /**
+   * Renders the query menu.
+   * 
+   * @returns {ReactNode} The react node.
+   */
   render() {
     return (
       <Card className='mb-2'>

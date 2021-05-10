@@ -20,12 +20,21 @@ import Config from '../../museum.config';
 
 import { withRouter } from 'react-router-dom';
 
+/**
+ * Filter Menu react component.
+ */
 class FilterMenu extends React.Component {
   static propTypes = {
     onSubmit: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired
   }
 
+  /**
+   * Creates a new filter menu component instance.
+   *
+   * @param {object} props Component properties.
+   * @param {func} props.onSubmit Callback fired when filter is submitted.
+   */
   constructor(props) {
     super(props);
 
@@ -35,6 +44,12 @@ class FilterMenu extends React.Component {
     };
   }
 
+  /**
+   * Builds the filter state from the search params so that filter state is
+   * maintained across page refresh and when user visits directly via a link.
+   *
+   * Enabled filters are built from URL search parameters in the browser url.
+   */
   componentDidMount() {
     const enabledFilters = new Object();
     const searchParams = new URLSearchParams(this.props.location.search);
@@ -62,12 +77,27 @@ class FilterMenu extends React.Component {
     this.setState({ enabledFilters: enabledFilters });
   }
 
+  /**
+   * If the enabled filters have updated since the component state was set then
+   * invoke the {@link Filter#onSubmit} callback.
+   * 
+   * @param {object} prevProps Props in previous state.
+   * @param {object} prevState State in previous state.
+   */
   componentDidUpdate(prevProps, prevState) {
     if(prevState.enabledFilters != this.state.enabledFilters) {
       this.props.onSubmit(this.state.enabledFilters);
     }
   }
 
+  /**
+   * Called when user updates a filter in the menu.
+   * 
+   * Updates the value of a filter and then updates the component state.
+   * 
+   * @param {string} key The filter key.
+   * @param {string} val New value to push into the filter.
+   */
   toggleFilter(key, val) {
     let { [key]: enabledOptions, ...otherOptions } = this.state.enabledFilters;
     enabledOptions = new Set(enabledOptions);
@@ -93,6 +123,16 @@ class FilterMenu extends React.Component {
     }));
   }
 
+  /**
+   * Called when user updates a filter in the menu.
+   *
+   * Updates the value of a filter to a single value and then updates the
+   * component state.
+   *
+   * @param {string} key The filter key.
+   * @param {string} option The filter option.
+   * @param {string} val Value to set filter option to.
+   */
   setFilterValue(key, option, value) {
     let { [key]: enabledOptions, ...otherOptions } = this.state.enabledFilters;
     enabledOptions = new Object(enabledOptions);
@@ -118,6 +158,13 @@ class FilterMenu extends React.Component {
     }));
   }
 
+  /**
+   * Returns the current value of a filter.
+   * 
+   * @param {string} key The filter key.
+   * @param {string} option The filter option.
+   * @returns {string} The filter value.
+   */
   getFilterValue(key, option) {
     if(key in this.state.enabledFilters) {
       const options = this.state.enabledFilters[key];
@@ -128,6 +175,13 @@ class FilterMenu extends React.Component {
     return '';
   }
 
+  /**
+   * Called when user clicks on clear filter button.
+   * 
+   * Clears all filters under a particular key.
+   * 
+   * @param {string} key Filter key to clear.
+   */
   clearFilter(key) {
     if(key === undefined) {
       this.setState({ enabledFilters: new Object() });
@@ -146,6 +200,12 @@ class FilterMenu extends React.Component {
     }
   }
 
+  /**
+   * Returns true if any filter is applied under a particular key.
+   * 
+   * @param {string} key Filter key to check.
+   * @returns {boolean} Is the filter is enabled.
+   */
   isFilterEnabled(key) {
     if(key === undefined) {
       return Object.keys(this.state.enabledFilters).length > 0;
@@ -153,11 +213,24 @@ class FilterMenu extends React.Component {
     return key in this.state.enabledFilters;
   }
 
+  /**
+   * Returns true if a filter contains a particular value.
+   * 
+   * @param {string} key Filter key to check.
+   * @param {string} val Value to check for.
+   * 
+   * @returns {boolean} Is value found in filter under key.
+   */
   isOptionEnabled(key, val) {
     return this.isFilterEnabled(key) && 
       this.state.enabledFilters[key].has(val);
   }
 
+  /**
+   * Toggles a filter drawer open state.
+   * 
+   * @param {string} key Filter drawer key.
+   */
   toggleDrawer(key) {
     if(this.state.openDrawer === key) {
       this.setState({ openDrawer: null });
@@ -166,6 +239,11 @@ class FilterMenu extends React.Component {
     }
   }
 
+  /**
+   * Renders the filter menu.
+   * 
+   * @returns {ReactNode} The react node.
+   */
   render() {
     return (
       <Card className='mb-2'>

@@ -17,12 +17,20 @@ import QueryMenu from './Query';
 import ViewSwitchMenu from './ViewSwitch';
 import SortMenu from './Sort';
 
+/**
+ * Component for search page.
+ */
 class Search extends React.Component {
   static propTypes = {
     history: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired
   };
 
+  /**
+   * Create new search page component instance.
+   * 
+   * @param {object} props Component properties.
+   */
   constructor(props) {
     super(props);
 
@@ -30,9 +38,32 @@ class Search extends React.Component {
       resultsCount: null
     };
 
+    /**
+     * The view switch menu reference.
+     * 
+     * @member {ViewSwitchMenu}
+     */
     this.view = null;
+
+    /**
+     * The query menu refernce.
+     * 
+     * @member {QueryMenu}
+     */
     this.query = null;
+
+    /**
+     * The filter menu reference.
+     * 
+     * @member {FilterMenu}
+     */
     this.filter = null;
+
+    /**
+     * The sort menu reference.
+     * 
+     * @member {SortMenu}
+     */
     this.sort = null;
 
     this.handleUpdateQuery = this.handleUpdateQuery.bind(this);
@@ -42,6 +73,10 @@ class Search extends React.Component {
     this.handleUpdateResultsList = this.handleUpdateResultsList.bind(this);
   }
 
+  /**
+   * Updates browser location when any of the child components (query, filter,
+   * view, sort) request an update.
+   */
   updateResultsList() {
     const searchParams = this.getResultsSearchParams();
 
@@ -54,6 +89,11 @@ class Search extends React.Component {
     });
   }
 
+  /**
+   * Generates URL search parameter object based on query, filter and view mode.
+   *
+   * @returns {URLSearchParams} The search params object.
+   */
   getResultsSearchParams() {
     const searchParams = new URLSearchParams();
     if(this.query !== null && this.query !== '') {
@@ -82,32 +122,62 @@ class Search extends React.Component {
     return searchParams;
   }
 
+  /**
+   * Event handler for when query menu requests new results.
+   *
+   * @param {string} q The query string submitted by the user.
+   */
   handleUpdateQuery(q) {
     this.query = q;
     this.updateResultsList();
   }
 
+  /**
+   * Event handler for when filter menu requests new results.
+   * 
+   * @param {object} f Enabled filter object.
+   */
   handleUpdateFilter(f) {
     this.filter = f;
     this.updateResultsList();
   }
 
+  /**
+   * Event handler for when view switch menu requests new results.
+   *
+   * @param {string} v The view mode selected by the user.
+   */
   handleUpdateView(v) {
     this.view = v;
     this.updateResultsList();
   }
 
+  /**
+   * Event handler for when sort menu requests new results.
+   * 
+   * @param {integer} s The sort mode selected by the user.
+   */
   handleUpdateSort(s) {
     this.sort = s;
     this.updateResultsList();
   }
 
+  /**
+   * Event handler for when results list has finished loading new result set.
+   *
+   * @param {object} e Results object.
+   */
   handleUpdateResultsList(e) {
     this.setState({ 
       resultsCount: e.count 
     });
   }
 
+  /**
+   * Renders the search page.
+   * 
+   * @returns {ReactNode} The react node.
+   */
   render() {
     return (
       <Row>
@@ -138,6 +208,7 @@ class Search extends React.Component {
           </div>
           
           {
+            // Do not render the results until menu components are mounted.
             this.view !== null && 
             this.query !== null && 
             this.filter !== null && 

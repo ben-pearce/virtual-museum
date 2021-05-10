@@ -6,12 +6,22 @@ import Form from 'react-bootstrap/Form';
 
 import { withRouter } from 'react-router-dom';
 
+/**
+ * Component for sort menu dropdown.
+ */
 class SortMenu extends React.Component {
   static propTypes = {
     location: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired
   };
 
+  /**
+   * Create sort menu component instance.
+   *
+   * @param {object} props Component properties.
+   * @param {func} props.onChange Callback fired when user updates the sort
+   * type.
+   */
   constructor(props) {
     super(props);
 
@@ -22,6 +32,9 @@ class SortMenu extends React.Component {
     this.handleSelectionUpdate = this.handleSelectionUpdate.bind(this);
   }
 
+  /**
+   * Retrieve the sort type from the browser URL when the component is mounted.
+   */
   componentDidMount() {
     const queryParams = new URLSearchParams(this.props.location.search);
     let sortQuery = queryParams.get('sort');
@@ -33,18 +46,35 @@ class SortMenu extends React.Component {
     this.setState({ sort: sortQuery });
   }
 
+  /**
+   * Invokes the {@link SortMenu#onChange} callback if the sort type has changed
+   * since the last state.
+   * 
+   * @param {object} prevProps Props in the previous state.
+   * @param {object} prevState State in the previous state.
+   */
   componentDidUpdate(prevProps, prevState) {
     if(prevState.sort !== this.state.sort) {
       this.props.onChange(this.state.sort);
     }
   }
 
+  /**
+   * Event handler for when user changes the sort type.
+   * 
+   * @param {event} e Event arguments.
+   */
   handleSelectionUpdate(e) {
     this.setState({
       sort: e.target.value
     });
   }
 
+  /**
+   * Render the sort menu component.
+   * 
+   * @returns {ReactNode} The react node.
+   */
   render() {
     return (
       <InputGroup>
