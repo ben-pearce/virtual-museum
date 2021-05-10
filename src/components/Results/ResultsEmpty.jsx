@@ -5,6 +5,12 @@ import {
   faGhost
 } from '@fortawesome/free-solid-svg-icons';
 
+/**
+ * A message displayed to the user when there are no results to show in the
+ * results view.
+ *
+ * @returns {ReactNode} The react node.
+ */
 const ResultsEmpty = () => {
   return (
     <div className='text-muted mt-3 mb-3'>

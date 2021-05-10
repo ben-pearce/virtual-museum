@@ -6,6 +6,11 @@ import {
   faTrain
 } from '@fortawesome/free-solid-svg-icons';
 
+/**
+ * Message displayed to the user when they have exhausted the results set.
+ *
+ * @returns {ReactNode} The react node.
+ */
 const ResultsEnd = () => {
   return (
     <div className='text-muted mt-3 mb-3'>

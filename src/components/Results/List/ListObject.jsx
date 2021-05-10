@@ -8,6 +8,18 @@ import { Link } from 'react-router-dom';
 
 import ListContentLoader from '../../ContentLoaders/ListContentLoader';
 
+/**
+ * List object component displayed in object results when list view is enabled.
+ * 
+ * Displays the object image, name, category and date.
+ * 
+ * @param {object} props Component properties.
+ * @param {boolean} props.preload True to show only object skeleton instead of actual content.
+ * @param {object|null} props.object The object data displayed in this component.
+ * @param {Image|null} props.image The image instance to display.
+ * 
+ * @returns {ReactNode} The {@link Card} react node.
+ */
 const ListObject = (props) => {
   if(props.preload) {
     return (

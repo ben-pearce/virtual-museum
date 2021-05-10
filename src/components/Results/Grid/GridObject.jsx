@@ -5,6 +5,18 @@ import { Link } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import GridContentLoader from '../../ContentLoaders/GridContentLoader';
 
+/**
+ * Grid object component displayed in object results when grid view is enabled.
+ * 
+ * Displays the object image, name, category and date.
+ * 
+ * @param {object} props Component properties.
+ * @param {boolean} props.preload True to show only object skeleton instead of actual content.
+ * @param {object|null} props.object The object data displayed in this component.
+ * @param {Image|null} props.image The image instance to display.
+ * 
+ * @returns {ReactNode} The {@link Card} react node.
+ */
 const GridObject = (props) => {
   if(props.preload) {
     return (
